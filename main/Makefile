@@ -44,7 +44,7 @@ INCPATH = ../include
 
 # additional libraries to be included 
  
-LIBS = m pthread
+LIBS = m
 
 LIBPATH =
 
