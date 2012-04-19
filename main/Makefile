@@ -51,7 +51,7 @@ LIBPATH =
 
 # scheduling and optimization options (such as -DSSE -DSSE2 -DP4)
  
-CFLAGS = -Wall -O 
+CFLAGS = -Wall -O -g -DSSE2
  
 
 ############################## do not change ###################################
