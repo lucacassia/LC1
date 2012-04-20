@@ -7,6 +7,7 @@
 #include"metro2.h"
 #include"metro3.h"
 #include"libutil.h"
+#include"jackknife.h"
 
 #define N 32
 #define BIN_W 100
@@ -14,14 +15,12 @@
 double M = 1;
 double W = 1;
 double D = 3;
-double x[N],o[N],tmp[N],var[N];
-double *data;
 
 double V(double x){ return M*W*W*x*x/2; }
 
 double dS(double *x,double y,int i){ return M*((x[i]-y)*(x[(i+1)%N]+x[(N+i-1)%N])+(y*y-x[i]*x[i]))+V(y)-V(x[i]); }
 
-double action(const double *x){
+double action(double *x){
     double s = 0;
     int i; for(i = 0; i < N-1; i++)
         s += M*(x[i+1]-x[i])*(x[i+1]-x[i])/2+(V(x[i])+V(x[i+1]))/2;
@@ -44,16 +43,18 @@ double metropolis(double *x){
 
 void ooo(double* x,double* o,double* data){
     int dt; for(dt = 0; dt < N; dt++){
-        double odt = 0;
+        double odt = o[dt] = 0;
         int i; for(i = 0; i < N; i++)
             odt += x[i]*x[(i+dt)%N];
-        o[dt] += odt/N;
-        data[dt] = odt/N;
+        odt /= N;
+        o[dt] += odt;
+        data[dt] = odt;
     }
 }
 
-double autoCorrelation(int i,int k,int n){
-    double mean,var,Rk; mean = var = Rk = 0;
+double autoCorrelation(int i,int k,int n,double* data){
+    double mean,var,Rk;
+    mean = var = Rk = 0;
     int t; for(t = 0; t < n-k; t++){
         Rk += data[N*t+i]*data[N*(t+k)+i];
         mean += data[N*t+i];
@@ -67,12 +68,15 @@ double autoCorrelation(int i,int k,int n){
 int main(int argc,char* argv[]){
     /*init cycles*/
     int cycles = 1e6; if(argc == 2) cycles = atoi(argv[1]);
+    int bin = cycles/BIN_W;
     /*init mem*/
-    data = (double*)malloc(N*cycles*sizeof(double));
+    double* data1 = (double*)malloc(N*cycles*sizeof(double));
+    double* data2 = (double*)malloc(N*bin*sizeof(double));
     /*init variables*/
+    double x[N],o[N],var[N];
     int i; for(i = 0; i < N; i++){
         x[i] = 100; /*hot action*/
-        o[i] = tmp[i] = var[i] = 0;
+        o[i] = var[i] = 0;
     }
 
     /*init ranlux*/
@@ -86,14 +90,16 @@ int main(int argc,char* argv[]){
     fclose(f0); metro0(); system("rm metro0.dat");
 
     /*metropolis loop*/
+    double vtmp[N];
     for(i = 0; i < cycles; i++){
         metropolis(x);
-        ooo(x,tmp,&data[i*N]);
+        ooo(x,vtmp,&data1[i*N]);
         if((i+1)%BIN_W == 0){
             int dt; for(dt = 0; dt < N; dt++){
-                o[dt] += tmp[dt]/BIN_W;
-                var[dt] += tmp[dt]*tmp[dt]/BIN_W/BIN_W;
-                tmp[dt] = 0;
+                double temp = vtmp[dt]/BIN_W;
+                o[dt] += temp;
+                var[dt] += temp*temp;
+//                data[bin*dt+(i+1)%BIN_W] = temp;
             }
         }
         loading(i,cycles);
@@ -103,18 +109,18 @@ int main(int argc,char* argv[]){
     FILE *f1 = fopen("metro1.dat","w");
     FILE *f2 = fopen("metro2.dat","w");
     for(i = 0; i < N; i++){
-        o[i] /= cycles/BIN_W;
-        var[i] = var[i]/(cycles/BIN_W)-o[i]*o[i];
+        o[i] /= bin;
+        var[i] = var[i]/bin-o[i]*o[i];
         fprintf(f1,"%d\t%lf\n",i,x[i]);
         fprintf(f2,"%d\t%lf\t%lf\n",i,fabs(o[i]),var[i]);
     }
-    fclose(f1);metro1(); system("rm metro1.dat");
-    fclose(f2);metro2(); system("rm metro2.dat");
+    fclose(f1); metro1(); system("rm metro1.dat");
+    fclose(f2); metro2(); system("rm metro2.dat");
 
     /*autocorrelation*/
     FILE *f3 = fopen("metro3.dat","w");
     for(i = 0; i < 30; i++)
-        fprintf(f3,"%d\t%lf\n",i,autoCorrelation(1,i,cycles));
+        fprintf(f3,"%d\t%lf\n",i,autoCorrelation(1,i,cycles,data1));
     fclose(f3); metro3(); system("rm metro3.dat");
 
     /*delta E*/
@@ -123,6 +129,7 @@ int main(int argc,char* argv[]){
         dE += acosh((o[i+1]+o[i-1])/(2*o[i]));
     printf("\n\n dE = %lf\n\n",dE/=3);
 
-    free(data);
+    free(data1);
+    free(data2);
     return 0;
 }
