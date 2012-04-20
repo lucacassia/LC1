@@ -70,11 +70,13 @@ int main(int argc,char* argv[]){
     int cycles = 1e6; if(argc == 2) cycles = atoi(argv[1]);
     int bin = cycles/BIN_W;
     /*init mem*/
-    double* data1 = (double*)malloc(N*cycles*sizeof(double));
-    double* data2 = (double*)malloc(N*bin*sizeof(double));
+    double* data = (double*)malloc(N*cycles*sizeof(double));
+    double* dtcl = (double*)malloc(N*bin*sizeof(double));
+    if(data==NULL || data==NULL)printf("\nmalloc fail!\n");
     /*init variables*/
     double x[N],o[N],var[N];
-    int i; for(i = 0; i < N; i++){
+    int i,j;
+    for(i = 0; i < N; i++){
         x[i] = 100; /*hot action*/
         o[i] = var[i] = 0;
     }
@@ -91,19 +93,18 @@ int main(int argc,char* argv[]){
 
     /*metropolis loop*/
     double vtmp[N];
-    for(i = 0; i < cycles; i++){
-        metropolis(x);
-        ooo(x,vtmp,&data1[i*N]);
-        if((i+1)%BIN_W == 0){
+    for(i = 0; i < bin; i++)
+        for(j = 0; j < BIN_W; j++){
+            metropolis(x);
+            ooo(x,vtmp,&data[(i*BIN_W+j)*N]);
             int dt; for(dt = 0; dt < N; dt++){
                 double temp = vtmp[dt]/BIN_W;
                 o[dt] += temp;
                 var[dt] += temp*temp;
-//                data[bin*dt+(i+1)%BIN_W] = temp;
+                dtcl[dt*bin+i] = temp;
             }
+            loading(i*BIN_W+j,cycles);
         }
-        loading(i,cycles);
-    }
 
     /*print data to file and plot*/
     FILE *f1 = fopen("metro1.dat","w");
@@ -120,16 +121,31 @@ int main(int argc,char* argv[]){
     /*autocorrelation*/
     FILE *f3 = fopen("metro3.dat","w");
     for(i = 0; i < 30; i++)
-        fprintf(f3,"%d\t%lf\n",i,autoCorrelation(1,i,cycles,data1));
+        fprintf(f3,"%d\t%lf\n",i,autoCorrelation(1,i,cycles,data));
     fclose(f3); metro3(); system("rm metro3.dat");
 
     /*delta E*/
     double dE = 0;
-    for(i = 1; i < 4; i++)
+    for(i = 2; i < 5; i++){
+        printf("\n\n dE = %lf\n",acosh((o[i+1]+o[i-1])/(2*o[i])));
         dE += acosh((o[i+1]+o[i-1])/(2*o[i]));
-    printf("\n\n dE = %lf\n\n",dE/=3);
+    }
+    //printf("\n\n dE = %lf\n",dE/=3);
 
-    free(data1);
-    free(data2);
+    /*jackknife*/
+    double mcl[N];
+    for(i = 0; i < N; i++)
+        if(i>0 && i<6)
+            mcl[i] = cluster(&dtcl[i*bin],bin);
+    double var_dE = 0;
+    for(i = 2; i < 5; i++){
+        printf("\n\n dE = %lf\n",acosh((mcl[i+1]+mcl[i-1])/(2*mcl[i])));
+        for(j = 0; j < bin; j++)
+            var_dE += (acosh((dtcl[(i+1)*bin+j]+dtcl[(i-1)*bin+j])/(2*dtcl[i*bin+j]))-acosh((mcl[i+1]+mcl[i-1])/(2*mcl[i])))*(acosh((dtcl[(i+1)*bin+j]+dtcl[(i-1)*bin+j])/(2*dtcl[i*bin+j]))-acosh((mcl[i+1]+mcl[i-1])/(2*mcl[i])));
+    }
+    printf("\n var = %lf\n\n",var_dE*=(bin-1)/bin);
+
+    free(data);
+    free(dtcl);
     return 0;
 }

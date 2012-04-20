@@ -1,7 +1,7 @@
 #ifndef JACKKNIFE
 #define JACKKNIFE
 
-double jackknife(double* data,int n)
+double cluster(double* data,int n)
 {
     double mean = 0;
     int i; for(i = 0; i < n; i++)
