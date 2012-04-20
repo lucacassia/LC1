@@ -126,24 +126,28 @@ int main(int argc,char* argv[]){
 
     /*delta E*/
     double dE = 0;
-    for(i = 2; i < 5; i++){
-        printf("\n\n dE = %lf\n",acosh((o[i+1]+o[i-1])/(2*o[i])));
+    for(i = 2; i < 5; i++)
         dE += acosh((o[i+1]+o[i-1])/(2*o[i]));
-    }
-    //printf("\n\n dE = %lf\n",dE/=3);
+    printf("\n\n dE = %lf\n",dE/=3);
 
     /*jackknife*/
-    double mcl[N];
-    for(i = 0; i < N; i++)
-        if(i>0 && i<6)
-            mcl[i] = cluster(&dtcl[i*bin],bin);
-    double var_dE = 0;
-    for(i = 2; i < 5; i++){
-        printf("\n\n dE = %lf\n",acosh((mcl[i+1]+mcl[i-1])/(2*mcl[i])));
-        for(j = 0; j < bin; j++)
-            var_dE += (acosh((dtcl[(i+1)*bin+j]+dtcl[(i-1)*bin+j])/(2*dtcl[i*bin+j]))-acosh((mcl[i+1]+mcl[i-1])/(2*mcl[i])))*(acosh((dtcl[(i+1)*bin+j]+dtcl[(i-1)*bin+j])/(2*dtcl[i*bin+j]))-acosh((mcl[i+1]+mcl[i-1])/(2*mcl[i])));
+    double mcl[N],dEm = 0,var_dE = 0;
+    for(i = 1; i < 6; i++)
+        mcl[i] = cluster(&dtcl[i*bin],bin);
+    for(i = 2; i < 5; i++)
+        dEm += acosh((mcl[i+1]+mcl[i-1])/(2*mcl[i]));
+    dEm /= 3;
+    printf("\n\n dEm = %lf\n",dEm);
+    for(j = 0; j < bin; i++){
+        dtcl[j] = 0;
+        for(i = 2; i < 5; i++)
+            dtcl[j] += acosh((dtcl[(i+1)*bin+j]+dtcl[(i-1)*bin+j])/(2*dtcl[i*bin+j]));
+        dtcl[j] /= 3;
     }
-    printf("\n var = %lf\n\n",var_dE*=(bin-1)/bin);
+    for(j = 0; j < bin; j++)
+        var_dE += (dtcl[j]-dEm)*(dtcl[j]-dEm);
+    var_dE*=(bin-1)/bin;
+    printf("\n var = %lf\n\n",var_dE);
 
     free(data);
     free(dtcl);
