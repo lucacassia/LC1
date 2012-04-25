@@ -1,4 +1,3 @@
-#include<stdlib.h>
 #include<math.h>
 #include<time.h>
 #include"random.h"
@@ -10,7 +9,6 @@
 #include"mvector.h"
 
 #define N 32
-#define BIN_W 100
 
 double M = 1;
 double W = 1;
@@ -18,7 +16,7 @@ double D = 3;
 
 double V(double x){ return M*W*W*x*x/2; }
 
-double dS(double *x,double y,int i){ return M*((x[i]-y)*(x[(i+1)%N]+x[(N+i-1)%N])+(y*y-x[i]*x[i]))+V(y)-V(x[i]); }
+double dS(double *x,double y,int i){ return M*((x[i]-y)*(x[(i+1)%N]+x[(i-1+N)%N])+(y*y-x[i]*x[i]))+V(y)-V(x[i]); }
 
 double action(double *x){
     double s = 0;
@@ -41,15 +39,11 @@ double metropolis(double *x){
     return DS;
 }
 
-void ooo(double* x,double* o,mvector* data,int offset){
-    int dt; for(dt = 0; dt < N; dt++){
-        double odt = o[dt] = 0;
-        int i; for(i = 0; i < N; i++)
-            odt += x[i]*x[(i+dt)%N];
-        odt /= N;
-        o[dt] += odt;
-        mset(data,offset+dt,odt);
-    }
+double correlation(double* x,int dt){
+    double odt = 0;
+    int i; for(i = 0; i < N; i++)
+        odt += x[i]*x[(i+dt)%N];
+    return odt/N;
 }
 
 double autoCorrelation(int i,int k,int n,mvector* data){
@@ -67,23 +61,22 @@ double autoCorrelation(int i,int k,int n,mvector* data){
 }
 
 int main(int argc,char* argv[]){
-    /*init cycles*/
+    /*init ranlux*/
+    rlxd_init(2,time(NULL));
+    /*init stuff*/
     int cycles = 1e6; if(argc == 2) cycles = atoi(argv[1]);
-    int bin = cycles/BIN_W;
+    int wid = 100; if(argc == 3) wid = atoi(argv[2]);
+    int bin = cycles/wid;
+    int i,j,dt;
     /*init mem*/
     mvector* data = mopen(N*cycles);
     mvector* dtcl = mopen(N*bin);
-    if(data==NULL||dtcl==NULL)printf("\nmalloc fail!\n");
     /*init variables*/
-    double x[N],o[N],var[N];
-    int i,j;
+    double x[N],c[N],var[N];
     for(i = 0; i < N; i++){
-        x[i] = 100; /*hot action*/
-        o[i] = var[i] = 0;
+        x[i] = 100;
+        c[i] = var[i] = 0;
     }
-
-    /*init ranlux*/
-    rlxd_init(2,time(NULL));
 
     /*action*/
     double S = action(x);
@@ -93,28 +86,31 @@ int main(int argc,char* argv[]){
     fclose(f0); metro0(); system("rm metro0.dat");
 
     /*metropolis loop*/
-    double vtmp[N];
-    for(i = 0; i < bin; i++)
-        for(j = 0; j < BIN_W; j++){
+    for(i = 0; i < bin; i++){
+        for(j = 0; j < wid; j++){
             metropolis(x);
-            ooo(x,vtmp,data,(i*BIN_W+j)*N);
-            int dt; for(dt = 0; dt < N; dt++){
-                double temp = vtmp[dt]/BIN_W;
-                o[dt] += temp;
-                var[dt] += temp*temp;
-                mset(dtcl, dt*bin+i, temp);
+            for(dt = 0; dt < N; dt++){
+                double tmp = correlation(x,dt);
+                mset(data, (i*wid+j)*N+dt, tmp);
+                mset(dtcl, dt*bin+i, mget(dtcl, dt*bin+i) + tmp/wid);
             }
-            loading(i*BIN_W+j,cycles);
+            loading(i*wid+j,cycles);
         }
+        for(dt = 0; dt < N; dt++){
+            double tmp = mget(dtcl, dt*bin+i);
+            c[dt] += tmp;
+            var[dt] += tmp*tmp;
+        }
+    }
 
     /*print data to file and plot*/
     FILE *f1 = fopen("metro1.dat","w");
     FILE *f2 = fopen("metro2.dat","w");
     for(i = 0; i < N; i++){
-        o[i] /= bin;
-        var[i] = var[i]/bin-o[i]*o[i];
+        c[i] /= bin;
+        var[i] = var[i]/bin-c[i]*c[i];
         fprintf(f1,"%d\t%lf\n",i,x[i]);
-        fprintf(f2,"%d\t%lf\t%lf\n",i,fabs(o[i]),var[i]);
+        fprintf(f2,"%d\t%lf\t%lf\n",i,fabs(c[i]),var[i]);
     }
     fclose(f1); metro1(); system("rm metro1.dat");
     fclose(f2); metro2(); system("rm metro2.dat");
@@ -128,36 +124,28 @@ int main(int argc,char* argv[]){
     /*delta E*/
     double dE = 0;
     for(i = 2; i < 5; i++)
-        dE += acosh((o[i+1]+o[i-1])/(2*o[i]));
+        dE += acosh((c[i+1]+c[i-1])/(2*c[i]));
     dE /= 3;
 
     /*jackknife*/
     double mcl[N],dEm = 0,var_dE = 0;
     for(i = 1; i < 6; i++){
-        double read,mean = 0;
+        mcl[i] = 0;
         for(j = 0; j < bin; j++)
-            mean += read = mget(dtcl,i*bin+j);
-        mean /= bin;
+            mcl[i] += mget(dtcl,i*bin+j);
+        mcl[i] /= bin;
         for(j = 0; j < bin; j++)
-            mset(dtcl,i*bin+j,mean+(mean-read)/(bin-1));
-        mcl[i] = mean;
+            mset(dtcl,i*bin+j,mcl[i]+(mcl[i]-mget(dtcl,i*bin+j))/(bin-1));
     }
     for(i = 2; i < 5; i++)
         dEm += acosh((mcl[i+1]+mcl[i-1])/(2*mcl[i]));
-    dEm /= 3;
     for(j = 0; j < bin; j++){
-        mset(dtcl,j,0);
-        for(i = 2; i < 5; i++){
-            mset(dtcl,j,mget(dtcl,j)+acosh((mget(dtcl,(i+1)*bin+j)+mget(dtcl,(i-1)*bin+j))/(2*mget(dtcl,i*bin+j))));
-        }
-        mset(dtcl,j,mget(dtcl,j)/3);
+        double tmp = 0;
+        for(i = 2; i < 5; i++)
+            tmp += acosh((mget(dtcl,(i+1)*bin+j)+mget(dtcl,(i-1)*bin+j))/(2*mget(dtcl,i*bin+j)));
+        var_dE += (tmp-dEm)*(tmp-dEm)/9;
     }
-    for(j = 0; j < bin; j++){
-        double read = mget(dtcl,j);
-        var_dE += (read-dEm)*(read-dEm);
-    }
-    var_dE*=(bin-1);
-    var_dE/=bin;
+    var_dE = (var_dE*(bin-1))/bin;
     printf("\n\n dE  = %lf\n\n dEm = %lf\n\n σ = %e\n\n",dE,dEm,sqrt(var_dE));
 
     mclose(data);
