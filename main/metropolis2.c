@@ -6,6 +6,7 @@
 #include"mvector.h"
 
 #define N 32
+#define PRINT
 
 double M = 1;
 double W = 1;
@@ -64,7 +65,7 @@ int main(int argc,char* argv[]){
     int cycles = 1e6; if(argc == 2) cycles = atoi(argv[1]);
     int wid = 100; if(argc == 3) wid = atoi(argv[2]);
     int bin = cycles/wid;
-    int i,j,dt;
+    int i,j,k;
     /*init mem*/
     mvector* data = mopen(0);
     mvector* dtcl = mopen(N*bin);
@@ -86,13 +87,16 @@ int main(int argc,char* argv[]){
     for(i = 0; i < bin; i++)
         for(j = 0; j < wid; j++){
             metropolis(x);
-            for(dt = 0; dt < N; dt++){
-                tmp = correlation(x,dt);
+            for(k = 0; k < N; k++){
+                tmp = correlation(x,k);
                 madd(data,tmp);
-                mset(dtcl, dt*bin+i, mget(dtcl, dt*bin+i) + tmp/wid);
+                mset(dtcl, k*bin+i, mget(dtcl, k*bin+i) + tmp/wid);
             }
+#ifdef PRINT
             loading(i*wid+j,bin*wid);
+#endif
         }
+    printf("\n");
 
     /*autocorrelation*/
     f = fopen("autocorrelation.dat","w");
@@ -103,14 +107,14 @@ int main(int argc,char* argv[]){
 
     /*correlation*/
     f = fopen("correlation.dat","w");
-    for(dt = 0; dt < N; dt++){
+    for(k = 0; k < N; k++){
         for(i = 0; i < bin; i++){
-            c[dt] += tmp = mget(dtcl, dt*bin+i);
-            var[dt] += tmp*tmp;
+            c[k] += tmp = mget(dtcl, k*bin+i);
+            var[k] += tmp*tmp;
         }
-        c[dt] /= bin;
-        var[dt] = var[dt]/bin-c[dt]*c[dt];
-        fprintf(f,"%d\t%lf\t%lf\n",dt,fabs(c[dt]),var[dt]);
+        c[k] /= bin;
+        var[k] = var[k]/bin-c[k]*c[k];
+        fprintf(f,"%d\t%lf\t%lf\n",k,fabs(c[k]),var[k]);
     }
     fclose(f); plot_correlation(); system("rm correlation.dat");
 
@@ -139,7 +143,7 @@ int main(int argc,char* argv[]){
         var_dE += (tmp-dEm)*(tmp-dEm)/9;
     }
     var_dE = (var_dE*(bin-1))/bin;
-    printf("\n\n dE  = %lf\n\n dEm = %lf\n\n σ = %e\n\n",dE,dEm,sqrt(var_dE));
+    printf("\n\n dE  = %lf\n\n σ = %e\n\n",dE,sqrt(var_dE));
 
     mclose(dtcl);
     return 0;
