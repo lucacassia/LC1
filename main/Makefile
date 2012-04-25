@@ -19,7 +19,7 @@ all: rmxeq mkdep mkxeq rmpmk
 
 # main programs and required modules 
 
-MAIN = derive gauss5 monte_carlo pi_greco metropolis
+MAIN = derive gauss5 monte_carlo pi_greco metropolis metropolis2
 
 RANDOM = ranlxs ranlxd gauss
 
