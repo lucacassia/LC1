@@ -72,7 +72,7 @@ int main(int argc,char* argv[]){
     /*init mem*/
     double* data = (double*)malloc(N*cycles*sizeof(double));
     double* dtcl = (double*)malloc(N*bin*sizeof(double));
-    if(data==NULL || data==NULL)printf("\nmalloc fail!\n");
+    if(data==NULL||dtcl==NULL)printf("\nmalloc fail!\n");
     /*init variables*/
     double x[N],o[N],var[N];
     int i,j;
@@ -128,7 +128,7 @@ int main(int argc,char* argv[]){
     double dE = 0;
     for(i = 2; i < 5; i++)
         dE += acosh((o[i+1]+o[i-1])/(2*o[i]));
-    printf("\n\n dE = %lf\n",dE/=3);
+    dE /= 3;
 
     /*jackknife*/
     double mcl[N],dEm = 0,var_dE = 0;
@@ -137,17 +137,19 @@ int main(int argc,char* argv[]){
     for(i = 2; i < 5; i++)
         dEm += acosh((mcl[i+1]+mcl[i-1])/(2*mcl[i]));
     dEm /= 3;
-    printf("\n\n dEm = %lf\n",dEm);
-    for(j = 0; j < bin; i++){
+    for(j = 0; j < bin; j++){
         dtcl[j] = 0;
-        for(i = 2; i < 5; i++)
+        for(i = 2; i < 5; i++){
             dtcl[j] += acosh((dtcl[(i+1)*bin+j]+dtcl[(i-1)*bin+j])/(2*dtcl[i*bin+j]));
+        }
         dtcl[j] /= 3;
     }
-    for(j = 0; j < bin; j++)
+    for(j = 0; j < bin; j++){
         var_dE += (dtcl[j]-dEm)*(dtcl[j]-dEm);
-    var_dE*=(bin-1)/bin;
-    printf("\n var = %lf\n\n",var_dE);
+    }
+    var_dE*=(bin-1);
+    var_dE/=bin;
+    printf("\n\n dE  = %lf\n\n dEm = %lf\n\n σ = %e\n\n",dE,dEm,sqrt(var_dE));
 
     free(data);
     free(dtcl);
