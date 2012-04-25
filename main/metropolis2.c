@@ -50,10 +50,10 @@ double autoCorrelation(int i,int k,int n,mvector* data){
     double mean,var,Rk;
     mean = var = Rk = 0;
     int t; for(t = 0; t < n-k; t++){
-        double read = mget(data,N*t+i);
-        Rk += read*mget(data,N*(t+k)+i);
-        mean += read;
-        var += read*read;
+        double tmp = mget(data,N*t+i);
+        Rk += tmp*mget(data,N*(t+k)+i);
+        mean += tmp;
+        var += tmp*tmp;
     }
     mean /= n-k;
     var = var/(n-k)-mean*mean;
@@ -69,10 +69,10 @@ int main(int argc,char* argv[]){
     int bin = cycles/wid;
     int i,j,dt;
     /*init mem*/
-    mvector* data = mopen(N*cycles);
+    mvector* data = mopen(0);
     mvector* dtcl = mopen(N*bin);
     /*init variables*/
-    double x[N],c[N],var[N];
+    double x[N],c[N],var[N],tmp;
     for(i = 0; i < N; i++){
         x[i] = 100;
         c[i] = var[i] = 0;
@@ -80,46 +80,42 @@ int main(int argc,char* argv[]){
 
     /*action*/
     double S = action(x);
-    FILE *f0 = fopen("metro0.dat","w");
+    FILE *f = fopen("metro0.dat","w");
     for(i = 0; i < 1000; i++)
-        fprintf(f0,"%d\t%lf\n",(i+1),S += metropolis(x));
-    fclose(f0); metro0(); system("rm metro0.dat");
+        fprintf(f,"%d\t%lf\n",(i+1),S += metropolis(x));
+    fclose(f); metro0(); system("rm metro0.dat");
 
     /*metropolis loop*/
-    for(i = 0; i < bin; i++){
+    for(i = 0; i < bin; i++)
         for(j = 0; j < wid; j++){
             metropolis(x);
             for(dt = 0; dt < N; dt++){
-                double tmp = correlation(x,dt);
-                mset(data, (i*wid+j)*N+dt, tmp);
+                tmp = correlation(x,dt);
+                madd(data,tmp);
                 mset(dtcl, dt*bin+i, mget(dtcl, dt*bin+i) + tmp/wid);
             }
-            loading(i*wid+j,cycles);
+            loading(i*wid+j,bin*wid);
         }
-        for(dt = 0; dt < N; dt++){
-            double tmp = mget(dtcl, dt*bin+i);
-            c[dt] += tmp;
-            var[dt] += tmp*tmp;
-        }
-    }
-
-    /*print data to file and plot*/
-    FILE *f1 = fopen("metro1.dat","w");
-    FILE *f2 = fopen("metro2.dat","w");
-    for(i = 0; i < N; i++){
-        c[i] /= bin;
-        var[i] = var[i]/bin-c[i]*c[i];
-        fprintf(f1,"%d\t%lf\n",i,x[i]);
-        fprintf(f2,"%d\t%lf\t%lf\n",i,fabs(c[i]),var[i]);
-    }
-    fclose(f1); metro1(); system("rm metro1.dat");
-    fclose(f2); metro2(); system("rm metro2.dat");
 
     /*autocorrelation*/
-    FILE *f3 = fopen("metro3.dat","w");
+    f = fopen("metro3.dat","w");
     for(i = 0; i < 30; i++)
-        fprintf(f3,"%d\t%lf\n",i,autoCorrelation(1,i,cycles,data));
-    fclose(f3); metro3(); system("rm metro3.dat");
+        fprintf(f,"%d\t%lf\n",i,autoCorrelation(1,i,bin*wid,data));
+    fclose(f); metro3(); system("rm metro3.dat");
+    mclose(data);
+
+    /*correlation*/
+    f = fopen("metro2.dat","w");
+    for(dt = 0; dt < N; dt++){
+        for(i = 0; i < bin; i++){
+            c[dt] += tmp = mget(dtcl, dt*bin+i);
+            var[dt] += tmp*tmp;
+        }
+        c[dt] /= bin;
+        var[dt] = var[dt]/bin-c[dt]*c[dt];
+        fprintf(f,"%d\t%lf\t%lf\n",dt,fabs(c[dt]),var[dt]);
+    }
+    fclose(f); metro2(); system("rm metro2.dat");
 
     /*delta E*/
     double dE = 0;
@@ -128,7 +124,7 @@ int main(int argc,char* argv[]){
     dE /= 3;
 
     /*jackknife*/
-    double mcl[N],dEm = 0,var_dE = 0;
+    double mcl[6],dEm = 0,var_dE = 0;
     for(i = 1; i < 6; i++){
         mcl[i] = 0;
         for(j = 0; j < bin; j++)
@@ -148,7 +144,6 @@ int main(int argc,char* argv[]){
     var_dE = (var_dE*(bin-1))/bin;
     printf("\n\n dE  = %lf\n\n dEm = %lf\n\n σ = %e\n\n",dE,dEm,sqrt(var_dE));
 
-    mclose(data);
     mclose(dtcl);
     return 0;
 }
