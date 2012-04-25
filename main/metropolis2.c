@@ -1,10 +1,7 @@
 #include<math.h>
 #include<time.h>
 #include"random.h"
-#include"metro0.h"
-#include"metro1.h"
-#include"metro2.h"
-#include"metro3.h"
+#include"plot.h"
 #include"libutil.h"
 #include"mvector.h"
 
@@ -80,10 +77,10 @@ int main(int argc,char* argv[]){
 
     /*action*/
     double S = action(x);
-    FILE *f = fopen("metro0.dat","w");
+    FILE *f = fopen("action.dat","w");
     for(i = 0; i < 1000; i++)
         fprintf(f,"%d\t%lf\n",(i+1),S += metropolis(x));
-    fclose(f); metro0(); system("rm metro0.dat");
+    fclose(f); plot_action(); system("rm action.dat");
 
     /*metropolis loop*/
     for(i = 0; i < bin; i++)
@@ -98,14 +95,14 @@ int main(int argc,char* argv[]){
         }
 
     /*autocorrelation*/
-    f = fopen("metro3.dat","w");
+    f = fopen("autocorrelation.dat","w");
     for(i = 0; i < 30; i++)
         fprintf(f,"%d\t%lf\n",i,autoCorrelation(1,i,bin*wid,data));
-    fclose(f); metro3(); system("rm metro3.dat");
+    fclose(f); plot_autocorrelation(); system("rm autocorrelation.dat");
     mclose(data);
 
     /*correlation*/
-    f = fopen("metro2.dat","w");
+    f = fopen("correlation.dat","w");
     for(dt = 0; dt < N; dt++){
         for(i = 0; i < bin; i++){
             c[dt] += tmp = mget(dtcl, dt*bin+i);
@@ -115,7 +112,7 @@ int main(int argc,char* argv[]){
         var[dt] = var[dt]/bin-c[dt]*c[dt];
         fprintf(f,"%d\t%lf\t%lf\n",dt,fabs(c[dt]),var[dt]);
     }
-    fclose(f); metro2(); system("rm metro2.dat");
+    fclose(f); plot_correlation(); system("rm correlation.dat");
 
     /*delta E*/
     double dE = 0;

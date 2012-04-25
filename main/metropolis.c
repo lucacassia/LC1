@@ -2,10 +2,7 @@
 #include<math.h>
 #include<time.h>
 #include"random.h"
-#include"metro0.h"
-#include"metro1.h"
-#include"metro2.h"
-#include"metro3.h"
+#include"plot.h"
 #include"libutil.h"
 #include"jackknife.h"
 
@@ -86,10 +83,10 @@ int main(int argc,char* argv[]){
 
     /*action*/
     double S = action(x);
-    FILE *f0 = fopen("metro0.dat","w");
+    FILE *f0 = fopen("action.dat","w");
     for(i = 0; i < 1000; i++)
         fprintf(f0,"%d\t%lf\n",(i+1),S += metropolis(x));
-    fclose(f0); metro0(); system("rm metro0.dat");
+    fclose(f0); plot_action(); system("rm action.dat");
 
     /*metropolis loop*/
     double vtmp[N];
@@ -107,22 +104,22 @@ int main(int argc,char* argv[]){
         }
 
     /*print data to file and plot*/
-    FILE *f1 = fopen("metro1.dat","w");
-    FILE *f2 = fopen("metro2.dat","w");
+    FILE *f1 = fopen("configuration.dat","w");
+    FILE *f2 = fopen("correlation.dat","w");
     for(i = 0; i < N; i++){
         o[i] /= bin;
         var[i] = var[i]/bin-o[i]*o[i];
         fprintf(f1,"%d\t%lf\n",i,x[i]);
         fprintf(f2,"%d\t%lf\t%lf\n",i,fabs(o[i]),var[i]);
     }
-    fclose(f1); metro1(); system("rm metro1.dat");
-    fclose(f2); metro2(); system("rm metro2.dat");
+    fclose(f1); plot_configuration(); system("rm configuration.dat");
+    fclose(f2); plot_correlation(); system("rm correlation.dat");
 
     /*autocorrelation*/
-    FILE *f3 = fopen("metro3.dat","w");
+    FILE *f3 = fopen("autocorrelation.dat","w");
     for(i = 0; i < 30; i++)
         fprintf(f3,"%d\t%lf\n",i,autoCorrelation(1,i,cycles,data));
-    fclose(f3); metro3(); system("rm metro3.dat");
+    fclose(f3); plot_autocorrelation(); system("rm autocorrelation.dat");
 
     /*delta E*/
     double dE = 0;
