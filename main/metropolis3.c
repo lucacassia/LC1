@@ -121,8 +121,7 @@ int main(int argc,char* argv[]){
     /*ΔE & W*/
     double dE = 0, W = 0;;
     for(k = 2; k < 5; k++){
-        tmp = acosh((c[k+1]+c[k-1])/(2*c[k]));
-        dE += tmp;
+        dE += tmp = acosh((c[k+1]+c[k-1])/(2*c[k]));
         W += sqrt(c[k]*exp(tmp*N/2.0)/(2*cosh(tmp*(N/2.0-k))));
     }
     dE /= 3;
@@ -142,8 +141,7 @@ int main(int argc,char* argv[]){
     /*compute mean values*/
     double dEm = 0, Wm = 0;
     for(k = 2; k < 5; k++){
-        tmp = acosh((mcl[k+1]+mcl[k-1])/(2*mcl[k]));
-        dEm += tmp;
+        dEm += tmp = acosh((mcl[k+1]+mcl[k-1])/(2*mcl[k]));
         Wm += sqrt(mcl[k]*exp(tmp*N/2.0)/(2*cosh(tmp*(N/2.0-k))));
     }
 
@@ -152,8 +150,7 @@ int main(int argc,char* argv[]){
     for(j = 0; j < bin; j++){
         double tmp1 = 0, tmp2 = 0;
         for(k = 2; k < 5; k++){
-            tmp = acosh((dtcl[(k+1)*bin+j]+dtcl[(k-1)*bin+j])/(2*dtcl[k*bin+j]));
-            tmp1 += tmp;
+            tmp1 += tmp = acosh((dtcl[(k+1)*bin+j]+dtcl[(k-1)*bin+j])/(2*dtcl[k*bin+j]));
             tmp2 += sqrt(c[k]*exp(tmp*N/2.0)/(2*cosh(tmp*(N/2.0-k))));
         }
         var_dE += (tmp1-dEm)*(tmp1-dEm)/9;
