@@ -68,4 +68,22 @@ void plot_autocorrelation(void){
 	fclose(pipe);
 }
 
+void plot_histogram(void){
+	FILE *pipe = popen("gnuplot -persist","w");
+	fprintf(pipe, "reset\n");
+	fprintf(pipe, "set border linewidth 1.5\n");
+	fprintf(pipe, "set grid\n");
+	fprintf(pipe, "set title \"Metropolis\"\n");
+	fprintf(pipe, "set xlabel \"dE\"\n");
+	fprintf(pipe, "set ylabel \"n(dE)\"\n");
+	fprintf(pipe, "unset key\n");
+	fprintf(pipe, "set term postscript enhanced color landscape lw 1 \"Verdana,10\"\n");
+	fprintf(pipe, "set output 'histogram.eps'\n");
+	fprintf(pipe, "set style data histogram\n");
+	fprintf(pipe, "set style histogram cluster gap 1\n");
+	fprintf(pipe, "set style fill solid border -1\n");
+	fprintf(pipe, "plot 'dE.dat' using (0.003*floor($1/0.003)):(1.0) smooth freq with boxes\n");
+	fclose(pipe);
+}
+
 #endif
