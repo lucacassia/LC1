@@ -1,10 +1,10 @@
-#include<math.h>
-#include<stdio.h>
 #include<stdlib.h>
+#include<stdio.h>
+#include<math.h>
 #include<time.h>
+#include"libutil.h"
 #include"random.h"
 #include"plot.h"
-#include"libutil.h"
 
 #define N 32
 
@@ -12,9 +12,13 @@ double M = 1;
 double W = 1;
 double D = 3;
 
-double V(double x){ return M*W*W*x*x/2; }
+double V(double x){
+    return M*W*W*x*x/2;
+}
 
-double dS(double *x,double y,int i){ return M*((x[i]-y)*(x[(i+1)%N]+x[(i-1+N)%N])+(y*y-x[i]*x[i]))+V(y)-V(x[i]); }
+double dS(double *x,double y,int i){
+    return M*((x[i]-y)*(x[(i+1)%N]+x[(i-1+N)%N])+(y*y-x[i]*x[i]))+V(y)-V(x[i]);
+}
 
 double action(double *x){
     double s = 0;
