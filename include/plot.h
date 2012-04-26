@@ -2,6 +2,7 @@
 #define PLOT_H
 
 #include <stdio.h>
+#include <stdlib.h>
 
 void plot_action(void){
 	FILE *pipe = popen("gnuplot -persist","w");
@@ -18,6 +19,7 @@ void plot_action(void){
 	fprintf(pipe, "set output 'action.eps'\n");
 	fprintf(pipe, "plot 'action.dat' with linespoints ls 1\n");
 	fclose(pipe);
+    system("rm action.dat");
 }
 
 void plot_configuration(void){
@@ -34,6 +36,7 @@ void plot_configuration(void){
 	fprintf(pipe, "set output 'configuration.eps'\n");
 	fprintf(pipe, "plot 'configuration.dat' with linespoints ls 1\n");
 	fclose(pipe);
+    system("rm configuration.dat");
 }
 
 void plot_correlation(void){
@@ -43,13 +46,14 @@ void plot_correlation(void){
 	fprintf(pipe, "set style line 1 lc rgb '#228f26' lt 1 lw 2 pt 7 ps 1.5 # --- green\n");
 	fprintf(pipe, "set grid\n");
 	fprintf(pipe, "set title \"Metropolis\"\n");
-	fprintf(pipe, "set xlabel \"dt\"\n");
-	fprintf(pipe, "set ylabel \"c[dt]\"\n");
+	fprintf(pipe, "set xlabel \"{/Symbol D}t\"\n");
+	fprintf(pipe, "set ylabel \"c[{/Symbol D}t]\"\n");
 	fprintf(pipe, "unset key\n");
 	fprintf(pipe, "set term postscript enhanced color landscape lw 1 \"Verdana,10\"\n");
 	fprintf(pipe, "set output 'correlation.eps'\n");
 	fprintf(pipe, "plot 'correlation.dat' with linespoints ls 1\n");
 	fclose(pipe);
+    system("rm correlation.dat");
 }
 
 void plot_autocorrelation(void){
@@ -66,24 +70,62 @@ void plot_autocorrelation(void){
 	fprintf(pipe, "set output 'autocorrelation.eps'\n");
 	fprintf(pipe, "plot 'autocorrelation.dat' with linespoints ls 1\n");
 	fclose(pipe);
+    system("rm autocorrelation.dat");
 }
 
-void plot_histogram(void){
+void binning(){
+    int i,n=100;
+    double min=0.93,max=0.99,width=(max-min)/n,tmp;
+    int freq[100];
+    for(i=0;i<100;i++)
+        freq[i]=0;
+    FILE* f=fopen("dE.dat","r");
+    while(fscanf(f,"%lf\n",&tmp)==1)
+        for(i=0;i<100;i++)
+            if(tmp>min+i*width && tmp<=min+(i+1)*width)
+                freq[i]++;
+    fclose(f);
+    f=fopen("bin.dat","w");
+    for(i=0;i<100;i++)
+//        if(freq[i]>10)
+            fprintf(f,"%lf\t%d\n",min+(i+0.5)*width,freq[i]);
+    fclose(f);
+}
+
+void fit(){
+    binning();
 	FILE *pipe = popen("gnuplot -persist","w");
 	fprintf(pipe, "reset\n");
 	fprintf(pipe, "set border linewidth 1.5\n");
+	fprintf(pipe, "set style line 1 lc rgb '#bf0d23' lt 1 lw 2 pt 7 ps 0.5 # --- red\n");
 	fprintf(pipe, "set grid\n");
 	fprintf(pipe, "set title \"Metropolis\"\n");
-	fprintf(pipe, "set xlabel \"dE\"\n");
-	fprintf(pipe, "set ylabel \"n(dE)\"\n");
-	fprintf(pipe, "unset key\n");
+	fprintf(pipe, "set tics out nomirror\n");
+	fprintf(pipe, "set xlabel \"{/Symbol D}E\"\n");
+	fprintf(pipe, "set ylabel \"Frequency\"\n");
 	fprintf(pipe, "set term postscript enhanced color landscape lw 1 \"Verdana,10\"\n");
 	fprintf(pipe, "set output 'histogram.eps'\n");
-	fprintf(pipe, "set style data histogram\n");
-	fprintf(pipe, "set style histogram cluster gap 1\n");
-	fprintf(pipe, "set style fill solid border -1\n");
-	fprintf(pipe, "plot 'dE.dat' using (0.003*floor($1/0.003)):(1.0) smooth freq with boxes\n");
+	fprintf(pipe, "f(x)=exp(-0.5*((x-m)/s)**2)/(2.50662827*s)\n");
+	fprintf(pipe, "m=0.962\n");
+	fprintf(pipe, "s=5e-3\n");
+	fprintf(pipe, "pi=3.14159265\n");
+	fprintf(pipe, "fit f(x) 'bin.dat' via s,m\n");
+	fprintf(pipe, "n=100\t#number of intervals\n");
+	fprintf(pipe, "max=0.99\t#max value\n");
+	fprintf(pipe, "min=0.93\t#min value\n");
+	fprintf(pipe, "width=(max-min)/n\t#interval width\n");
+	fprintf(pipe, "hist(x,width)=width*floor(x/width)+width/2.0\n");
+	fprintf(pipe, "set xrange [min:max]\n");
+	fprintf(pipe, "set yrange [0:]\n");
+	fprintf(pipe, "set xtics min,(max-min)/5,max\n");
+	fprintf(pipe, "set boxwidth width\n");
+	fprintf(pipe, "set style fill solid 0.5\t#fillstyle\n");
+	fprintf(pipe, "set tics out nomirror\n");
+	fprintf(pipe, "ti = sprintf(\"Gaussian Fit:\\n<{/Symbol D}E> = %%f; {/Symbol s} = %%f\", m, s)\n");
+	fprintf(pipe, "plot 'dE.dat' u (hist($1,width)):(1.0) smooth freq w boxes lc rgb '#00ff00' title 'Binned data',f(x) w l ls 1 title ti\n");
 	fclose(pipe);
+    system("rm fit.log");
+    system("rm bin.dat");
 }
 
 #endif

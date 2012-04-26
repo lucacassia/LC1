@@ -7,7 +7,6 @@
 #include"libutil.h"
 
 #define N 32
-#define PRINT
 
 double M = 1;
 double W = 1;
@@ -67,7 +66,6 @@ int main(int argc,char* argv[]){
     int wid = 100; if(argc == 3) wid = atoi(argv[2]);
     int bin = cycles/wid;
     int i,j,k;
-    FILE* f;
     /*init mem*/
     double* data = malloc(N*wid*bin*sizeof(double));
     double* dtcl = malloc(N*bin*sizeof(double));
@@ -80,10 +78,11 @@ int main(int argc,char* argv[]){
 
     /*action*/
     double S = action(x);
-    f = fopen("action.dat","w");
+    FILE* f = fopen("action.dat","w");
     for(i = 0; i < 1000; i++)
         fprintf(f,"%d\t%lf\n",(i+1),S += metropolis(x));
-    fclose(f); plot_action(); system("rm action.dat");
+    fclose(f);
+    plot_action();
 
     /*metropolis loop*/
     for(i = 0; i < bin; i++)
@@ -94,17 +93,16 @@ int main(int argc,char* argv[]){
                 data[(i*wid+j)*N+k] = tmp;
                 dtcl[k*bin+i] += tmp/wid;
             }
-#ifdef PRINT
             loading(i*wid+j,bin*wid);
-#endif
         }
 
     /*autocorrelation*/
     f = fopen("autocorrelation.dat","w");
     for(i = 0; i < 30; i++)
         fprintf(f,"%d\t%lf\n",i,autoCorrelation(1,i,bin*wid,data));
-    fclose(f); plot_autocorrelation(); system("rm autocorrelation.dat");
+    fclose(f);
     free(data);
+    plot_autocorrelation();
 
     /*correlation*/
     f = fopen("correlation.dat","w");
@@ -117,16 +115,21 @@ int main(int argc,char* argv[]){
         var[k] = var[k]/bin-c[k]*c[k];
         fprintf(f,"%d\t%lf\t%lf\n",k,fabs(c[k]),var[k]);
     }
-    fclose(f); plot_correlation(); system("rm correlation.dat");
+    fclose(f);
+    plot_correlation();
 
-    /*delta E*/
-    double dE = 0;
-    for(i = 2; i < 5; i++)
-        dE += acosh((c[i+1]+c[i-1])/(2*c[i]));
+    /*ΔE & W*/
+    double dE = 0, W = 0;;
+    for(k = 2; k < 5; k++){
+        tmp = acosh((c[k+1]+c[k-1])/(2*c[k]));
+        dE += tmp;
+        W += sqrt(c[k]*exp(tmp*N/2.0)/(2*cosh(tmp*(N/2.0-k))));
+    }
     dE /= 3;
+    W /= 3;
 
-    /*jackknife*/
-    double mcl[6],dEm = 0,var_dE = 0;
+    /*cluster generation*/
+    double mcl[6];
     for(i = 1; i < 6; i++){
         mcl[i] = 0;
         for(j = 0; j < bin; j++)
@@ -135,21 +138,38 @@ int main(int argc,char* argv[]){
         for(j = 0; j < bin; j++)
             dtcl[i*bin+j] = mcl[i]+(mcl[i]-dtcl[i*bin+j])/(bin-1);
     }
-    for(i = 2; i < 5; i++)
-        dEm += acosh((mcl[i+1]+mcl[i-1])/(2*mcl[i]));
-    for(j = 0; j < bin; j++){
-        double tmp = 0;
-        for(i = 2; i < 5; i++)
-            tmp += acosh((dtcl[(i+1)*bin+j]+dtcl[(i-1)*bin+j])/(2*dtcl[i*bin+j]));
-        var_dE += (tmp-dEm)*(tmp-dEm)/9;
+
+    /*compute mean values*/
+    double dEm = 0, Wm = 0;
+    for(k = 2; k < 5; k++){
+        tmp = acosh((mcl[k+1]+mcl[k-1])/(2*mcl[k]));
+        dEm += tmp;
+        Wm += sqrt(mcl[k]*exp(tmp*N/2.0)/(2*cosh(tmp*(N/2.0-k))));
     }
+
+    /*compute variance*/
+    double var_dE = 0, var_W = 0;
+    for(j = 0; j < bin; j++){
+        double tmp1 = 0, tmp2 = 0;
+        for(k = 2; k < 5; k++){
+            tmp = acosh((dtcl[(k+1)*bin+j]+dtcl[(k-1)*bin+j])/(2*dtcl[k*bin+j]));
+            tmp1 += tmp;
+            tmp2 += sqrt(c[k]*exp(tmp*N/2.0)/(2*cosh(tmp*(N/2.0-k))));
+        }
+        var_dE += (tmp1-dEm)*(tmp1-dEm)/9;
+        var_W += (tmp2-Wm)*(tmp2-Wm)/9;
+    }
+    free(dtcl);
     var_dE = (var_dE*(bin-1))/bin;
-    printf("\n\n dE  = %lf\n\n σ = %e\n\n",dE,sqrt(var_dE));
+    var_W = (var_W*(bin-1))/bin;
+
+    /*plot ΔE*/
     f = fopen("dE.dat","a");
     fprintf(f,"%lf\n",dE);
     fclose(f);
-    plot_histogram();
+    fit();
 
-    free(dtcl);
+    printf("\n\n ΔE  = %lf\n\n σ = %e\n\n W  = %lf\n\n σ = %e\n\n",dE,sqrt(var_dE),W,sqrt(var_W));
+
     return 0;
 }

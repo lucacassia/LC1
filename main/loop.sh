@@ -1,8 +1,8 @@
 #!/bin/bash
 
-for run in {1..100}
+for i in {1..100}
 do
-  echo "loop $run"
+  echo "loop $i/100"
   ./metropolis3
 done
 
