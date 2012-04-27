@@ -7,6 +7,7 @@
 #include"plot.h"
 
 #define N 32
+//#define PLOT
 
 double M = 1;
 double W = 1;
@@ -57,7 +58,6 @@ int main(int argc,char* argv[]){
         x[i] = 100;
         c[i] = var[i] = 0;
     }
-    FILE* f;
 
     /*action*/
     for(i = 0; i < 1000; i++)
@@ -124,6 +124,8 @@ int main(int argc,char* argv[]){
     var_W = (var_W*(bin-1))/bin;
     free(dtcl);
 
+#ifdef PLOT
+    FILE* f;
     /*plot ΔE*/
     f = fopen("dE.dat","a");
     fprintf(f,"%lf\n",dE);
@@ -134,6 +136,7 @@ int main(int argc,char* argv[]){
     f = fopen("W.dat","a");
     fprintf(f,"%lf\n",W);
     fclose(f);
+#endif
 
     printf("\n\n ΔE  = %lf\n\n σ = %e\n\n W  = %lf\n\n σ = %e\n\n",dE,sqrt(var_dE),W,sqrt(var_W));
 
