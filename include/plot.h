@@ -74,22 +74,23 @@ void plot_autocorrelation(void){
 }
 
 void binning(){
-    int i,n=100;
+    int i,n=125;
     double min=0.93,max=0.99,width=(max-min)/n,tmp;
-    int freq[100];
-    for(i=0;i<100;i++)
+    int* freq = malloc(n*sizeof(int));
+    for(i=0;i<n;i++)
         freq[i]=0;
     FILE* f=fopen("dE.dat","r");
     while(fscanf(f,"%lf\n",&tmp)==1)
-        for(i=0;i<100;i++)
+        for(i=0;i<n;i++)
             if(tmp>min+i*width && tmp<=min+(i+1)*width)
                 freq[i]++;
     fclose(f);
     f=fopen("bin.dat","w");
-    for(i=0;i<100;i++)
+    for(i=0;i<n;i++)
 //        if(freq[i]>10)
             fprintf(f,"%lf\t%d\n",min+(i+0.5)*width,freq[i]);
     fclose(f);
+    free(freq);
 }
 
 void fit(){
@@ -110,7 +111,7 @@ void fit(){
 	fprintf(pipe, "s=5e-3\n");
 	fprintf(pipe, "pi=3.14159265\n");
 	fprintf(pipe, "fit f(x) 'bin.dat' via s,m\n");
-	fprintf(pipe, "n=100\t#number of intervals\n");
+	fprintf(pipe, "n=125\t#number of intervals\n");
 	fprintf(pipe, "max=0.99\t#max value\n");
 	fprintf(pipe, "min=0.93\t#min value\n");
 	fprintf(pipe, "width=(max-min)/n\t#interval width\n");
