@@ -122,8 +122,8 @@ int main(int argc,char* argv[]){
     fclose(f);
     plot_correlation();
 
-    /*ΔE & W*/
-    double dE = 0, W = 0;;
+    /*deltaE & W*/
+    double dE = 0, W = 0;
     for(k = 2; k < 5; k++){
         dE += tmp = acosh((c[k+1]+c[k-1])/(2*c[k]));
         W += sqrt(c[k]*exp(tmp*N/2.0)/(2*cosh(tmp*(N/2.0-k))));
@@ -164,7 +164,7 @@ int main(int argc,char* argv[]){
     var_dE = (var_dE*(bin-1))/bin;
     var_W = (var_W*(bin-1))/bin;
 
-    /*plot ΔE*/
+    /*plot deltaE*/
     f = fopen("dE.dat","a");
     fprintf(f,"%lf\n",dE);
     fclose(f);
@@ -175,7 +175,7 @@ int main(int argc,char* argv[]){
     fprintf(f,"%lf\n",W);
     fclose(f);
 
-    printf("\n\n ΔE  = %lf\n\n σ = %e\n\n W  = %lf\n\n σ = %e\n\n",dE,sqrt(var_dE),W,sqrt(var_W));
+    printf("\n\n dE  = %lf\n\n sigma = %e\n\n W  = %lf\n\n sigma = %e\n\n",dE,sqrt(var_dE),W,sqrt(var_W));
 
     return 0;
 }
