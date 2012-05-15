@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 void plot_action(void){
 	FILE *pipe = popen("gnuplot -persist","w");
@@ -110,7 +111,7 @@ void fit(){
 	fprintf(pipe, "m=0.962\n");
 	fprintf(pipe, "s=5e-3\n");
 	fprintf(pipe, "pi=3.14159265\n");
-	fprintf(pipe, "fit f(x) 'bin.dat' via s,m\n");
+	fprintf(pipe, "fit f(x) 'bin.dat' using 1:2 via s,m\n");
 	fprintf(pipe, "n=125\t#number of intervals\n");
 	fprintf(pipe, "max=0.99\t#max value\n");
 	fprintf(pipe, "min=0.93\t#min value\n");
@@ -122,11 +123,31 @@ void fit(){
 	fprintf(pipe, "set boxwidth width\n");
 	fprintf(pipe, "set style fill solid 0.5\t#fillstyle\n");
 	fprintf(pipe, "set tics out nomirror\n");
-	fprintf(pipe, "ti = sprintf(\"Gaussian Fit:\\n<{/Symbol D}E> = %%f; {/Symbol s} = %%f\", m, s)\n");
+	fprintf(pipe, "ti = sprintf(\"Gaussian Fit:\\n{/Symbol m} = %%f; {/Symbol s} = %%f\", m, s)\n");
 	fprintf(pipe, "plot 'dE.dat' u (hist($1,width)):(1.0) smooth freq w boxes lc rgb '#00ff00' title 'Binned data',f(x) w l ls 1 title ti\n");
 	fclose(pipe);
     system("rm fit.log");
     system("rm bin.dat");
+}
+
+void plot_var(){
+	FILE *pipe = popen("gnuplot -persist","w");
+	fprintf(pipe, "reset\n");
+	fprintf(pipe, "set border linewidth 1.5\n");
+	fprintf(pipe, "set grid\n");
+	fprintf(pipe, "set title \"Metropolis\"\n");
+	fprintf(pipe, "set xlabel \"sweep number\"\n");
+	fprintf(pipe, "set ylabel \"{/Symbol s^2}\"\n");
+	fprintf(pipe, "set term postscript enhanced color landscape lw 1 \"Verdana,10\"\n");
+	fprintf(pipe, "set output 'variance.eps'\n");
+	fprintf(pipe, "f(x)=10**(a*log10(x)+b)\n");
+	fprintf(pipe, "a=-1\n");
+	fprintf(pipe, "b=1\n");
+	fprintf(pipe, "fit f(x) 'var_dE.dat' using 1:2:(sqrt($2)) via a,b\n");
+	fprintf(pipe, "set log xy\n");
+	fprintf(pipe, "ti = sprintf(\"Linear Fit:\\na = %%f; b = %%f\", a, b)\n");
+	fprintf(pipe, "plot 'var_dE.dat' pt 2 ps 1.5 lc rgb '#4444ff' title 'data',f(x) w l ls 1 lc rgb '#ff4444' title ti\n");
+	fclose(pipe);
 }
 
 #endif

@@ -1,8 +1,9 @@
 #!/bin/bash
 
-for i in {1..100}
+for (( i=1000; i<=65392000; i*=2 ))
 do
-  echo "loop $i/100"
-  ./metropolis
+  echo "loop $i"
+  ./metropolis2 $i
+  echo
 done
 

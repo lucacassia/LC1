@@ -43,6 +43,8 @@ double correlation(double* x,int dt){
 }
 
 int main(int argc,char* argv[]){
+    /*set input/output to be unbuffered*/
+    setvbuf(stdout, NULL, _IONBF, 0);
     /*init ranlux*/
     rlxd_init(2,time(NULL));
     /*init stuff*/
@@ -137,6 +139,11 @@ int main(int argc,char* argv[]){
     fprintf(f,"%lf\n",W);
     fclose(f);
 #endif
+
+//    FILE* g = fopen("var_dE.dat","a");
+//    fprintf(g,"%d\t%e\n",bin*wid,var_dE);
+//    fclose(g);
+    plot_var();
 
     printf("\n\n ΔE  = %lf\n\n σ = %e\n\n W  = %lf\n\n σ = %e\n\n",dE,sqrt(var_dE),W,sqrt(var_W));
 
