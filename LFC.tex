@@ -34,7 +34,7 @@
   title=\lstname,%
   keywordstyle=[1]\color{mygreen}\bfseries,%
   morekeywords=[1]{double,int,float,char,complex_t,rgb_t,plist},%
-  keywordstyle=[2]\color{myred}\textbf,%
+  keywordstyle=[2]\color{myred}\bfseries,%
   morekeywords=[2]{for,while,if,else,return,sizeof},%
   stringstyle=\color{mauve},%
   commentstyle=\color{blue},%
@@ -96,7 +96,7 @@ dove
 \begin{center}$\mathcal{L}(x_{i},x_{i+1}) = \frac{m}{2}\left(\frac{x_{i}-x_{i+1}}{a}\right)^{2}-\frac{1}{2}V(x_{i})-\frac{1}{2}V(x_{i+1})$\end{center}
 Per calcolare il $\Delta S = S'-S$ si può tenere presente il fatto che ad ogni estrazione solo una variabile di sistema viene modificata e quindi tutti i termini delle due sommatorie che non contengono quella variabile si elidono nella differenza. Pertanto si utilizza la formula ridotta
 \begin{eqnarray*}
- \Delta S_i &=& a[\mathcal{L}(x'_{i-1},x'_{i})+\mathcal{L}(x'_{i},x'_{i+1})-\mathcal{L}(x_{i-1},x_{i})-\mathcal{L}(x_{i},x_{i+1})]\\
+ \Delta S_i &=& a[\mathcal{L}(x_{i-1},x'_{i})+\mathcal{L}(x'_{i},x_{i+1})-\mathcal{L}(x_{i-1},x_{i})-\mathcal{L}(x_{i},x_{i+1})]\\
    &=& M[(x_{i}-x'_{i})(x_{i+1}+x_{i-1})+(x'^2_i-x^2_i)]+V(x'_i)-V(x_i)
 \end{eqnarray*}
 
