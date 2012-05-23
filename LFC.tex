@@ -8,6 +8,9 @@
 \usepackage{graphicx}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{minted}
+
+\usemintedstyle{friendly}
 
 \definecolor{mygreen}{RGB}{46,139,87}
 \definecolor{myred}{RGB}{165,42,42}
@@ -66,23 +69,38 @@
 
 \chapter{\huge Integrazione Numerica}
 
+\begin{minted}{c}
+int main() {
+printf("hello, world");
+return 0;
+}
+\end{minted}
+
 \section{Quadrature Gaussiane}
 \section{Monte Carlo}
 \section{Campionamento d'Importanza}
 
 \chapter{\huge Algoritmo Metropolis}
+Il Metropolis è l'algoritmo più influenziale fra quelli appartenenti alla classe dei metodi Monte Carlo. Supportato da una profonda teoria, questo algoritmo costituisce uno strumento fondamentale per la scienza della computazione.
+
+In questa sezione si propone di sviluppare un algoritmo Metropolis per simulare un oscillatore armonico quantistico e confrontare i risultati numerici con la teoria.
 
 \section{L'Oscillatore Armonico Quantistico}
+Il sistema è costituito da una particella che si muove in uno spazio unidimensionale e in un reticolo temporale finito di passo $a$ e lunghezza $N$ con condizioni di periodicità al contorno. La particella inoltre interagisce con un potenziale armonico della forma $V(x) = \frac{m}{2}\omega^2 x^2$.
+
+La relazione che si vuole verificare è quella per il correlatore delle variabili $l$-esima e $k$-esima
 \begin{center}
-$\langle X_l X_k\rangle = 2|\langle\tilde{E}_0|\hat{x}|\tilde{E}_1\rangle|^2 exp\left(-\frac{Na}{2}(\tilde{E}_1-\tilde{E}_0)cosh\left[a\left(\frac{N}{2}-|l-k|\right)(\tilde{E}_0-\tilde{E}_1)\right]\right)$
+\small
+$\langle X_l X_k\rangle = 2|\langle\tilde{E}_0|\hat{x}|\tilde{E}_1\rangle|^2 exp\left\{-\frac{Na}{2}(\tilde{E}_1-\tilde{E}_0)cosh\left[a\left(\frac{N}{2}-|l-k|\right)(\tilde{E}_0-\tilde{E}_1)\right]\right\}$.
 \end{center}
+Nel caso in esame l'insieme delle variabili $x_t$ del sistema viene rappresentato da un array monodimensionale {\ttfamily x[i]} di {\ttfamily double}, dove l'indice {\ttfamily i} indica la posizione nel reticolo temporale, e dove si è posto $x_N \equiv x_0$.
 \section{Azione e Termalizzazione}
 
 Inizializzando il vettore della configurazione con numeri casuali è necessario lasciare del tempo al sistema per portarsi allo stato di equilibrio, dove, per l'ipotesi di ergodicità, tutte le configurazioni possibili sono equiprobabili. Tale processo, denominato termalizzazione, richiede di norma non più di 500 cicli di metropolis, eseguiti i quali sarà possibile estrarre le configurazioni con la giusta distribuzione di probabilità. Vi sono due modi di porre le condizioni iniziali:
 \begin{itemize}
    \small
-   \item[-] Azione ''fredda'' : le variabili sono inizializzate a zero.
-   \item[-] Azione ''calda'' : le variabili sono inizializzate a valori diversi da zero.
+   \item[-] Azione ``fredda'' : le variabili sono inizializzate a zero.
+   \item[-] Azione ``calda'' : le variabili sono inizializzate a valori diversi da zero.
 \end{itemize}
 \begin{figure}[h]
 \centering
@@ -106,7 +124,7 @@ dove le variabili {\ttfamily M} e {\ttfamily W} corrispondono alla massa e alla 
 
 Il ciclo di termalizzazione viene eseguito all'interno del {\ttfamily main()}:
 \lstinputlisting[firstline=84,lastline=89,firstnumber=84]{main/metropolis.c}
-La funzione {\ttfamily metropolis()} esegue uno sweep sul vettore {\ttfamily x} delle variabili di sistema aggiornandole una alla volta con probabilità $e^{-\Delta S_i}$, e restituendo infine la variazione di azione totale {\ttfamily DS} = {\ttfamily $\sum$ ds} = $\sum^{N-1}_{i=0}\Delta S_i$.
+La funzione {\ttfamily metropolis()} esegue uno sweep sul vettore {\ttfamily x} delle variabili di sistema aggiornandole una alla volta con probabilità $min(1,e^{-\Delta S_i})$, e restituendo infine la variazione di azione totale {\ttfamily DS} = {\ttfamily $\sum$ ds} = $\sum^{N-1}_{i=0}\Delta S_i$.
 \lstinputlisting[firstline=30,lastline=42,firstnumber=30]{main/metropolis.c}
 La variabile $x'_i$ è estratta con una distribuzione piatta in un'intorno sferico di $x_i$ di raggio {\ttfamily D}.
 
@@ -144,11 +162,20 @@ La variabile $x'_i$ è estratta con una distribuzione piatta in un'intorno sferi
 \section{Calcolo dell'Elemento di Matrice}
 
 \chapter{\huge Metodo Runge-Kutta per Equazioni Differenziali Ordinare}
+In analisi numerica i metodi Runge-Kutta sono una famiglia di metodi iterativi impliciti ed espliciti per la risuluzione approssimata di equazioni differenziali ordinarie. Il più comune di questi metodi è il cosidetto ``RK4'' o anche Runge-Kutta del quarto ordine.
+
+Sia dato il problema di Cauchy
+\begin{center}
+$ y' = f(t, y), \quad y(t_0) = y_0.$
+\end{center}
+Il metodo RK4 per questo problema è allora dato dalle seguenti equazioni:
+\begin{align}y_{n+1} = y_n + \tfrac{1}{6} \left(k_1 + 2k_2 + 2k_3 + k_4 \right) \\t_{n+1} = t_n + h \\\end{align}
+dove $y_{n+1}$ è l'approssimazione RK4 di $y(t_{n+1})$, e
+\begin{align}k_1 = hf(t_n, y_n),\\k_2 = hf(t_n + \tfrac{1}{2}h , y_n +  \tfrac{1}{2} k_1),\\k_3 = hf(t_n + \tfrac{1}{2}h , y_n +   \tfrac{1}{2} k_2),\\k_4 = hf(t_n + h , y_n + k_3).\end{align}.
 
 \section{Il Pendolo Caotico}
 \section{Oscillatore di Van Der Pol}
 \section{Attrattore di Lorenz}
-\section{N-Body Simulation}
 
 \chapter{\huge Altri Metodi per PDE}
 
