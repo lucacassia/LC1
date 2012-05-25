@@ -1,0 +1,261 @@
+\documentclass[a4paper,11pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{fancyhdr}
+\usepackage{indentfirst}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
+
+\newenvironment{system}{\left\lbrace \begin{aligned}}{\end{aligned}\right.}
+
+\definecolor{mygreen}{RGB}{46,139,87}
+\definecolor{myred}{RGB}{165,42,42}
+\definecolor{mypurple}{RGB}{160,32,240}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{RGB}{255,0,255}
+ 
+\lstdefinelanguage{myC}{%
+  basicstyle=\ttfamily\footnotesize,%
+  numbers=left,%
+  numberstyle=\tiny\color{gray},%
+  stepnumber=1,%
+  numbersep=5pt,%
+  backgroundcolor=\color{white},%
+  showspaces=false,%
+  showstringspaces=false,%
+  showtabs=false,%
+  frame=single,%
+  rulecolor=\color{black},%
+  tabsize=2,%
+  captionpos=b,%
+  breaklines=true,%
+  breakatwhitespace=false,%
+  title=\lstname,%
+  keywordstyle=[1]\color{mygreen}\bfseries,%
+  morekeywords=[1]{double,int,float,char,complex_t,rgb_t,plist},%
+  keywordstyle=[2]\color{myred}\bfseries,%
+  morekeywords=[2]{for,while,if,else,return,sizeof},%
+  stringstyle=\color{mauve},%
+  commentstyle=\color{blue},%
+  escapeinside={\%*}{*)},%
+  morecomment=[s]{/*}{*/},%
+  morecomment=[l][\color{mypurple}]{\#},%
+  morecomment=[l]{//},%
+  morestring=[b]",%
+}
+
+\lstset{language=myC}
+
+\title{\bfseries{\Huge{Relazioni di Laboratorio di Fisica Computazionale}}}
+\author{\textit {Luca Cassia - [MAT. 728341]}}
+
+\date{Spring 2012}
+
+\pagestyle{fancy}\addtolength{\headwidth}{20pt}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection \ #1}{}}
+\cfoot{}
+
+\rhead[\fancyplain{}{\bfseries\leftmark}]{\fancyplain{}{\bfseries\thepage}}
+\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\chapter{\huge Integrazione Numerica}
+
+\section{Quadrature Gaussiane}
+\section{Monte Carlo}
+
+\section{Esempi}
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{integral}
+\caption{Errore calcolato}
+\label{fig:integral}
+\end{figure}
+
+\section{Differenziazione Numerica}
+
+\chapter{\huge Algoritmo Metropolis}
+\textit{Il Metropolis è l'algoritmo più influenziale fra quelli appartenenti alla classe dei metodi Monte Carlo. Supportato da una profonda teoria, questo algoritmo costituisce uno strumento fondamentale per la scienza della computazione.}
+
+\textit{In questa sezione si propone di sviluppare un algoritmo Metropolis per simulare un oscillatore armonico quantistico e confrontare i risultati numerici con la teoria.}
+
+\section{L'Oscillatore Armonico Quantistico}
+Il sistema è costituito da una particella che si muove in uno spazio unidimensionale e in un reticolo temporale finito di passo $a$ e lunghezza $N$ con condizioni di periodicità al contorno. La particella inoltre interagisce con un potenziale armonico della forma $V(x) = \frac{m}{2}\omega^2 x^2$.
+
+La relazione che si vuole verificare è quella per il correlatore delle variabili $l$-esima e $k$-esima
+\begin{center}
+\small
+$\langle X_l X_k\rangle = 2|\langle\tilde{E}_0|\hat{x}|\tilde{E}_1\rangle|^2 exp\left\{-\frac{Na}{2}(\tilde{E}_1-\tilde{E}_0)cosh\left[a\left(\frac{N}{2}-|l-k|\right)(\tilde{E}_0-\tilde{E}_1)\right]\right\}$.
+\end{center}
+Nel caso in esame l'insieme delle variabili $x_t$ del sistema viene rappresentato da un array monodimensionale {\ttfamily x[i]} di {\ttfamily double}, dove l'indice {\ttfamily i} indica la posizione nel reticolo temporale, e dove si è posto $x_N \equiv x_0$.
+\section{Azione e Termalizzazione}
+
+Inizializzando il vettore della configurazione con numeri casuali è necessario lasciare del tempo al sistema per portarsi allo stato di equilibrio, dove, per l'ipotesi di ergodicità, tutte le configurazioni possibili sono equiprobabili. Tale processo, denominato termalizzazione, richiede di norma non più di 500 cicli di metropolis, eseguiti i quali sarà possibile estrarre le configurazioni con la giusta distribuzione di probabilità. Vi sono due modi di porre le condizioni iniziali:
+\begin{itemize}
+   \small
+   \item[-] Azione ``fredda'' : le variabili sono inizializzate a zero.
+   \item[-] Azione ``calda'' : le variabili sono inizializzate a valori diversi da zero.
+\end{itemize}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{action1}\includegraphics[width=0.5\textwidth]{action2}
+\caption{Azione Fredda e Calda}
+\label{fig:action}
+\end{figure}
+Per il calcolo dell'azione euclidea si usa la formula
+\begin{center}$S = a\displaystyle\sum\limits_{i=0}^{N-1} \mathcal{L}(x_{i},x_{i+1})$\end{center}
+dove
+\begin{center}$\mathcal{L}(x_{i},x_{i+1}) = \frac{m}{2}\left(\frac{x_{i}-x_{i+1}}{a}\right)^{2}-\frac{1}{2}V(x_{i})-\frac{1}{2}V(x_{i+1})$\end{center}
+Per calcolare il $\Delta S = S'-S$ si può tenere presente il fatto che ad ogni estrazione solo una variabile di sistema viene modificata e quindi tutti i termini delle due sommatorie che non contengono quella variabile si elidono nella differenza. Pertanto si utilizza la formula ridotta
+\begin{eqnarray*}
+ \Delta S_i &=& a[\mathcal{L}(x_{i-1},x'_{i})+\mathcal{L}(x'_{i},x_{i+1})-\mathcal{L}(x_{i-1},x_{i})-\mathcal{L}(x_{i},x_{i+1})]\\
+   &=& M[(x_{i}-x'_{i})(x_{i+1}+x_{i-1})+(x'^2_i-x^2_i)]+V(x'_i)-V(x_i)
+\end{eqnarray*}
+
+Il codice corrispondente è
+\lstinputlisting[firstline=9,lastline=28,firstnumber=9]{../main/metropolis.c}
+dove le variabili {\ttfamily M} e {\ttfamily W} corrispondono alla massa e alla pulsazione riscalate del fattore $a$ mentre la {\ttfamily y} argomento della funzione {\ttfamily dS()} corrisponde alla nuova variabile estratta $x'_{i}$. Si noti che le condizioni di periodicità al contorno del reticolo sono implementate attraverso l'algebra modulo N sugli indici del vettore {\ttfamily x}.
+
+Il ciclo di termalizzazione viene eseguito all'interno del {\ttfamily main()}:
+\lstinputlisting[firstline=84,lastline=89,firstnumber=84]{../main/metropolis.c}
+La funzione {\ttfamily metropolis()} esegue uno sweep sul vettore {\ttfamily x} delle variabili di sistema aggiornandole una alla volta con probabilità $min(1,e^{-\Delta S_i})$, e restituendo infine la variazione di azione totale {\ttfamily DS} = {\ttfamily $\sum$ ds} = $\sum^{N-1}_{i=0}\Delta S_i$.
+\lstinputlisting[firstline=30,lastline=42,firstnumber=30]{../main/metropolis.c}
+La variabile $x'_i$ è estratta con una distribuzione piatta in un'intorno sferico di $x_i$ di raggio {\ttfamily D}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{autocorrelation}
+\caption{Autocorrelazione}
+\label{fig:autocorrelation}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{correlation}
+\caption{Correlazione}
+\label{fig:correlation}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{configuration}
+\caption{Configurazione}
+\label{fig:configuration}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{histogram}
+\caption{Istogramma}
+\label{fig:histogram}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{variance}
+\caption{Varianza di $\Delta E$}
+\label{fig:variance}
+\end{figure}
+
+\section{Autocorrelazione}
+\section{Correlazione}
+\section{Calcolo di $\Delta E$}
+\section{Calcolo dell'Elemento di Matrice}
+
+\chapter{\huge Metodo Runge-Kutta per Equazioni Differenziali Ordinare}
+\textit{In analisi numerica i metodi Runge-Kutta sono una famiglia di metodi iterativi impliciti ed espliciti per la risuluzione approssimata di equazioni differenziali ordinarie. Il più comune di questi metodi è il cosidetto ``RK4'' o anche Runge-Kutta del quarto ordine.}
+\\\\
+Sia dato il problema di Cauchy
+\begin{center}
+$ y' = f(t, y), \quad y(t_0) = y_0.$
+\end{center}
+Si assume che il tempo sia discretizzato in istanti $t_n$ equidistanziati di un intervallo $h$.\\
+Il metodo RK4 per questo problema è allora dato dalle seguenti equazioni:
+\begin{eqnarray*}
+y_{n+1} &=& y_n + \tfrac{1}{6} \left(k_1 + 2k_2 + 2k_3 + k_4 \right)\\
+t_{n+1} &=& t_n + h
+\end{eqnarray*}
+dove $y_{n+1}$ è l'approssimazione RK4 di $y(t_{n+1})$, e
+\begin{eqnarray*}
+k_1 &=& hf(t_n, y_n),\\
+k_2 &=& hf(t_n + \tfrac{1}{2}h , y_n + \tfrac{1}{2} k_1),\\
+k_3 &=& hf(t_n + \tfrac{1}{2}h , y_n + \tfrac{1}{2} k_2),\\
+k_4 &=& hf(t_n + h , y_n + k_3).
+\end{eqnarray*}
+Il valore della funzione $y$ all'istante $t_{n+1}$ è uguale quindi al suo valore all'istante $t_n$ incrementato della media ponderata di quattro incrementi $k$, dove ogni incremento è il prodotto della dimensione dell'intervallo $h$ ed una stimata pendenza specificata dalla funzione $f$.
+\begin{itemize}
+\item $k_1$ è l'incremento basato sulla pendenza di $f$ all'estremo sinistro dell'intervallo, calcolato in $y_n$ (metodo di Eulero);
+\item $k_2$ è l'incremento basato sulla pendenza nel punto medio dell'intervallo, calcolato in $y_n+\frac{1}{2}k_1$;
+\item $k_3$ è ancora l'incremento basato sulla pendenza nel punto medio, calcolato però in $y_n+\frac{1}{2}k_2$;
+\item $k_4$ è l'ncremento basato sulla pendenza all'estremo destro dell'intervallo, calcolato in $y_n+k_3$.
+\end{itemize}
+Si nota dalla formula per $y_{n+1}$ che peso maggiore viene assegnato all'incremento al centro dell'intervallo. Inoltre, se $f=f(t)$ cioè non dipende da $y$, il metodo RK4 si riduce alla regola di integrazione di Simpson.
+
+RK4 è un metodo del quarto ordine e quindi l'errore ad ogni step è dell'ordine di $h^5$, mentre l'errore totale accumulato è dell'ordine di $h^4$.
+
+\section{Il Pendolo Caotico}
+Il sistema che si intende simulare è quello dell'oscillatore caotico forzato di equazione
+\begin{center}
+$\ddot{\theta} = \underbrace{\frac{g}{R}}_1 \sin(\theta)-\underbrace{\frac{k}{m}}_q \dot{\theta}+\underbrace{\frac{f}{mR}}_b \cos(\omega t)$.
+\end{center}
+È possibile rielaborare l'equazione precedente in un sistema di equazioni differenziali del primo ordine come di seguito
+$$\begin{system}
+\dot\theta&=\phi \\[1ex] \dot\phi&=\sin(\theta)-q\phi+b\cos(\omega t)
+\end{system}$$
+ed applicare ora la formula del metodo RK4 ad entrambe le equazioni.
+
+Rappresentando la traiettoria del sistema nello spazio delle fasi si ottiene
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{chaotic}
+\caption{Traiettoria dell'oscillatore per $q = 0.3$, $b = 1.4$, $\omega = 0.6667$}
+\label{fig:chaotic}
+\end{figure}
+
+\section{Oscillatore di Van Der Pol}
+Analogamente al caso dell'oscillatore caotico, si applica il metodo RK4 all'equazione del pendolo di Van Der Pol, che in questo caso è
+\begin{center}
+$\frac{d^2x}{dt^2}-\mu(1-x^2)\frac{dx}{dt}+x= 0$
+\end{center}
+dove $\mu$ rappresenta l'intensità dello smorzamento. Il sistema associato è
+$$\begin{system}
+\dot x&= y\\[1ex] \dot y&=\mu(1-x^2)\frac{dx}{dt}-x
+\end{system}$$
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{vanderpol}
+\caption{Traiettoria dell'oscillatore per $\mu = 4$}
+\label{fig:vanderpol}
+\end{figure}
+Anche in questo caso si può osservare un ciclo limite nello spazio delle fasi del sistema, ovvero una traiettoria chiusa verso la quale il sistema è portato ad evolvere.
+
+\section{Attrattore di Lorenz}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{lorenz1}\includegraphics[width=0.5\textwidth]{lorenz}
+\includegraphics[width=\textwidth]{lorenz0}
+\caption{Sistema di Lorenz in tre dimensioni}
+\label{fig:lorenz}
+\end{figure}
+
+
+\chapter{\huge Metodo implicito per PDE}
+
+\section{Equazione di Schr\"{o}dinger}
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{schrodinger}
+\caption{Scattering di un pacchetto gaussiano su una buca di potenziale}
+\label{fig:schrodinger}
+\end{figure}
+
+
+\end{document}
