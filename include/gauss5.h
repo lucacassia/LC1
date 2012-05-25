@@ -3,42 +3,23 @@
 
 #include<math.h>
 
-double gauss5(double (*function)(double))
+double gauss5(double(*function)(double),double a,double b)
 {
-    double zero[5]={0,
-                    sqrt(5.0-2.0*sqrt(10.0/7.0))/3.0,
-                    -sqrt(5.0-2.0*sqrt(10.0/7.0))/3.0,
-                    sqrt(5.0+2.0*sqrt(10.0/7.0))/3.0,
-                    -sqrt(5.0+2.0*sqrt(10.0/7.0))/3.0 };
-    double weight[5] = { 128.0/255.0,
-                        (322.0+13.0*sqrt(70))/900.0,
-                        (322.0+13.0*sqrt(70))/900.0,
-                        (322.0-13.0*sqrt(70))/900.0,
-                        (322.0-13.0*sqrt(70))/900.0 };
-    double integral=0;
+    double zero[5] = {0.0000000000000000,
+                     -0.5384693101056831,
+                      0.5384693101056831,
+                     -0.9061798459386640,
+                      0.9061798459386640 };
+    double weight[5] = { 0.5688888888888889,
+                         0.4786286704993665,
+                         0.4786286704993665,
+                         0.2369268850561891,
+                         0.2369268850561891 };
+    double integral = 0;
     int i;
-    for(i=0;i<5;i++)
-        integral+=function(zero[i])*weight[i];
-    return integral;
-}
-
-double gauss5ab(double(*function)(double),double a,double b)
-{
-    double zero[5]={0,
-                    sqrt(5.0-2.0*sqrt(10.0/7.0))/3.0,
-                    -sqrt(5.0-2.0*sqrt(10.0/7.0))/3.0,
-                    sqrt(5.0+2.0*sqrt(10.0/7.0))/3.0,
-                    -sqrt(5.0+2.0*sqrt(10.0/7.0))/3.0 };
-    double weight[5] = { 128.0/255.0,
-                        (322.0+13.0*sqrt(70))/900.0,
-                        (322.0+13.0*sqrt(70))/900.0,
-                        (322.0-13.0*sqrt(70))/900.0,
-                        (322.0-13.0*sqrt(70))/900.0 };
-    double integral=0;
-    int i;
-    for(i=0;i<5;i++)
-        integral+=function((b-a)*zero[i]/2+(a+b)/2)*weight[i];
-    return (b-a)*integral/2;
+    for(i = 0; i < 5; i++)
+        integral += weight[i] * function( (b-a)*zero[i]/2.0 + (a+b)/2.0 );
+    return (b-a)*integral/2.0;
 }
 
 #endif
