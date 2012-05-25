@@ -1,9 +1,9 @@
 #!/bin/bash
 
-for (( i=1000; i<=65392000; i*=2 ))
+for (( i=10; i<=1100; i+=10 ))
 do
   echo "loop $i"
-  ./metropolis2 $i
+  ./integral $i
   echo
 done
 

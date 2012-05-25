@@ -99,7 +99,7 @@ void fit(){
 	FILE *pipe = popen("gnuplot -persist","w");
 	fprintf(pipe, "reset\n");
 	fprintf(pipe, "set border linewidth 1.5\n");
-	fprintf(pipe, "set style line 1 lc rgb '#bf0d23' lt 1 lw 2 pt 7 ps 0.5 # --- red\n");
+	fprintf(pipe, "set style line 1 lc rgb '#aa5500' lt 1 lw 3 pt 7 ps 0.5 # --- red\n");
 	fprintf(pipe, "set grid\n");
 	fprintf(pipe, "set title \"Metropolis\"\n");
 	fprintf(pipe, "set tics out nomirror\n");
@@ -124,7 +124,7 @@ void fit(){
 	fprintf(pipe, "set style fill solid 0.5\t#fillstyle\n");
 	fprintf(pipe, "set tics out nomirror\n");
 	fprintf(pipe, "ti = sprintf(\"Gaussian Fit:\\n{/Symbol m} = %%f; {/Symbol s} = %%f\", m, s)\n");
-	fprintf(pipe, "plot 'dE.dat' u (hist($1,width)):(1.0) smooth freq w boxes lc rgb '#00ff00' title 'Binned data',f(x) w l ls 1 title ti\n");
+	fprintf(pipe, "plot 'dE.dat' u (hist($1,width)):(1.0) smooth freq w boxes lc rgb '#ddcccc' title 'Binned data',f(x) w l ls 1 title ti\n");
 	fclose(pipe);
     system("rm fit.log");
     system("rm bin.dat");
@@ -140,13 +140,8 @@ void plot_var(){
 	fprintf(pipe, "set ylabel \"{/Symbol s^2}\"\n");
 	fprintf(pipe, "set term postscript enhanced color landscape lw 1 \"Verdana,10\"\n");
 	fprintf(pipe, "set output 'variance.eps'\n");
-	fprintf(pipe, "f(x)=10**(a*log10(x)+b)\n");
-	fprintf(pipe, "a=-1\n");
-	fprintf(pipe, "b=1\n");
-	fprintf(pipe, "fit f(x) 'var_dE.dat' using 1:2:(sqrt($2)) via a,b\n");
 	fprintf(pipe, "set log xy\n");
-	fprintf(pipe, "ti = sprintf(\"Linear Fit:\\na = %%f; b = %%f\", a, b)\n");
-	fprintf(pipe, "plot 'var_dE.dat' pt 2 ps 1.5 lc rgb '#4444ff' title 'data',f(x) w l ls 1 lc rgb '#ff4444' title ti\n");
+	fprintf(pipe, "plot 'var_dE.dat' pt 6 ps 1.5 lc rgb '#000022' title 'variance'\n");
 	fclose(pipe);
 }
 
