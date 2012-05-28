@@ -19,7 +19,7 @@ all: rmxeq mkdep mkxeq rmpmk
 
 # main programs and required modules 
 
-MAIN = derive integral pi_greco metropolis metropolis2
+MAIN = derive integral pi_greco metropolis metropolis2 viewer
 
 RANDOM = ranlxs ranlxd gauss
 
@@ -44,7 +44,7 @@ INCPATH = ../include
 
 # additional libraries to be included 
  
-LIBS = m
+LIBS = m glut GL X11 GLEW
 
 LIBPATH =
 
