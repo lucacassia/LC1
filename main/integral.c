@@ -5,7 +5,6 @@
 
 double function(double x){ return log(1+x);}
 double primitive(double x){ return -x+log(1+x)+x*log(1+x);}
-double gaussian(double x,double s,double m,int n){ return pow(x,n)*exp(-pow((x-m)/s,2)/2.0)/(2.50662827)/s;}
 
 int main(int argc, char *argv[])
 {
