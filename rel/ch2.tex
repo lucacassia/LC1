@@ -1,0 +1,87 @@
+\chapter{\huge Algoritmo Metropolis}
+
+\textit{Il Metropolis è l'algoritmo più influenziale fra quelli appartenenti alla classe dei metodi Monte Carlo. Supportato da una profonda teoria, questo algoritmo costituisce uno strumento fondamentale per la scienza della computazione.}
+
+\textit{In questa sezione si propone di sviluppare un algoritmo Metropolis per simulare un oscillatore armonico quantistico e confrontare i risultati numerici con la teoria.}
+
+\section{L'Oscillatore Armonico Quantistico}
+Il sistema è costituito da una particella che si muove in uno spazio unidimensionale e in un reticolo temporale finito di passo $a$ e lunghezza $N$ con condizioni di periodicità al contorno. La particella inoltre interagisce con un potenziale armonico della forma $V(x) = \frac{m}{2}\omega^2 x^2$.
+
+La relazione che si vuole verificare è quella per il correlatore delle variabili $l$-esima e $k$-esima
+\begin{center}
+\small
+$\langle X_l X_k\rangle = 2|\langle\tilde{E}_0|\hat{x}|\tilde{E}_1\rangle|^2 exp\left\{-\frac{Na}{2}(\tilde{E}_1-\tilde{E}_0)cosh\left[a\left(\frac{N}{2}-|l-k|\right)(\tilde{E}_0-\tilde{E}_1)\right]\right\}$.
+\end{center}
+Nel caso in esame l'insieme delle variabili $x_t$ del sistema viene rappresentato da un array monodimensionale {\ttfamily x[i]} di {\ttfamily double}, dove l'indice {\ttfamily i} indica la posizione nel reticolo temporale, e dove si è posto $x_N \equiv x_0$.
+\section{Azione e Termalizzazione}
+
+Inizializzando il vettore della configurazione con numeri casuali è necessario lasciare del tempo al sistema per portarsi allo stato di equilibrio, dove, per l'ipotesi di ergodicità, tutte le configurazioni possibili sono equiprobabili. Tale processo, denominato termalizzazione, richiede di norma non più di 500 cicli di metropolis, eseguiti i quali sarà possibile estrarre le configurazioni con la giusta distribuzione di probabilità. Vi sono due modi di porre le condizioni iniziali:
+\begin{itemize}
+   \small
+   \item[-] Azione ``fredda'' : le variabili sono inizializzate a zero.
+   \item[-] Azione ``calda'' : le variabili sono inizializzate a valori diversi da zero.
+\end{itemize}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{action1}\includegraphics[width=0.5\textwidth]{action2}
+\caption{Azione Fredda e Calda}
+\label{fig:action}
+\end{figure}
+Per il calcolo dell'azione euclidea si usa la formula
+\begin{center}$S = a\displaystyle\sum\limits_{i=0}^{N-1} \mathcal{L}(x_{i},x_{i+1})$\end{center}
+dove
+\begin{center}$\mathcal{L}(x_{i},x_{i+1}) = \frac{m}{2}\left(\frac{x_{i}-x_{i+1}}{a}\right)^{2}-\frac{1}{2}V(x_{i})-\frac{1}{2}V(x_{i+1})$\end{center}
+Per calcolare il $\Delta S = S'-S$ si può tenere presente il fatto che ad ogni estrazione solo una variabile di sistema viene modificata e quindi tutti i termini delle due sommatorie che non contengono quella variabile si elidono nella differenza. Pertanto si utilizza la formula ridotta
+\begin{eqnarray*}
+ \Delta S_i &=& a[\mathcal{L}(x_{i-1},x'_{i})+\mathcal{L}(x'_{i},x_{i+1})-\mathcal{L}(x_{i-1},x_{i})-\mathcal{L}(x_{i},x_{i+1})]\\
+   &=& M[(x_{i}-x'_{i})(x_{i+1}+x_{i-1})+(x'^2_i-x^2_i)]+V(x'_i)-V(x_i)
+\end{eqnarray*}
+
+Il codice corrispondente è
+dove le variabili {\ttfamily M} e {\ttfamily W} corrispondono alla massa e alla pulsazione riscalate del fattore $a$ mentre la {\ttfamily y} argomento della funzione {\ttfamily dS()} corrisponde alla nuova variabile estratta $x'_{i}$. Si noti che le condizioni di periodicità al contorno del reticolo sono implementate attraverso l'algebra modulo N sugli indici del vettore {\ttfamily x}.
+
+Il ciclo di termalizzazione viene eseguito all'interno del {\ttfamily main()}:
+La funzione {\ttfamily metropolis()} esegue uno sweep sul vettore {\ttfamily x} delle variabili di sistema aggiornandole una alla volta con probabilità $min(1,e^{-\Delta S_i})$, e restituendo infine la variazione di azione totale {\ttfamily DS} = {\ttfamily $\sum$ ds} = $\sum^{N-1}_{i=0}\Delta S_i$.
+La variabile $x'_i$ è estratta con una distribuzione piatta in un'intorno sferico di $x_i$ di raggio {\ttfamily D}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{autocorrelation}
+\caption{Autocorrelazione}
+\label{fig:autocorrelation}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{correlation}
+\caption{Correlazione}
+\label{fig:correlation}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{configuration}
+\caption{Configurazione}
+\label{fig:configuration}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{histogram}
+\caption{Istogramma}
+\label{fig:histogram}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{variance}
+\caption{Varianza di $\Delta E$}
+\label{fig:variance}
+\end{figure}
+
+\section{Autocorrelazione}
+\section{Correlazione}
+\section{Calcolo di $\Delta E$}
+\section{Calcolo dell'Elemento di Matrice}
+
+
