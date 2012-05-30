@@ -1,15 +1,14 @@
 #include<stdio.h>
-#include<stdlib.h>
 #include"derive.h"
 
 double function(double x){
-    return tan(x);
+    return exp(x);
 }
 
-int main(int argc, char *argv[]){
-    int n = 1;
-    if(argc > 1) n = atoi(argv[1]);
-    double x = 4*atan(1);
-    printf("\n(D^%d)function(%e) = %e,\t%e\n\n",n,x,Derivez(function,x,n),Derive(function,x,n,1e-6));
+int main(){
+    int i;
+    double x = 0;
+    for(i = 0; i < 5; i++)
+        printf("\n(D^%d)[F(%f)]: errors\t%14.10e,\t%14.10e\n\n",i,x,fabs(Derivez(function,x,i)-1),fabs(Derive(function,x,i,1e-6)-1));
     return 0;
 }
