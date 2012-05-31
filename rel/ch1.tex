@@ -57,12 +57,32 @@ $\pm\tfrac13\sqrt{5+2\sqrt{10/7}}$ & $\tfrac{322-13\sqrt{70}}{900}$ \\
 }
 \end{center}
 
-\section{Integrazione Composta}
+\subsection{Integrazione Composta}
 Una tecnica utile a migliorare la precisione del calcolo dell'integrale numerico consiste nello spezzare l'intervallo d'integrazione in $n$ sottointervalli
 $$\int_a^b f(x)dx=\sum_{i=0}^{n-1}\int_{\frac{b-a}{n}i}^{\frac{b-a}{n}(i+1)}f(x)dx$$
 Dopodiché si applica uno dei metodi di quadratura numerica descritto ad ogni intervallino ed infine si somma ad ottenere il risutato voluto.
 
 \section{Monte Carlo}
+L'integrazione Monte Carlo, a differenza dei metodi di quadratura precedentemente descritti, fa uso di sampling casuali e per questo motivo rientra nella categoria dei metodi non deterministici.
+
+Nella sua versione più semplice l'algoritmo consiste nell'estrarre uniformemente punti dalla regione di integrazione per stimare l'integrale ed il relativo errore. Si supponga che il sample sia costituito da $N$ punti $x_1,...,x_N$ appartenenti alla regione di integrazione di misura $V$, allora la stima dell'integrale è data da
+$$ I \approx E_N \equiv V\frac{1}{N} \sum_{i=1}^N f(x_i) = V \langle f \rangle $$
+Poichè $\{x_i\}$ è una sequenza di punti equidistribuiti in $V$, si può dimostrare che $ I = \lim_{N \to \infty} E_N $.
+Tenendo presente che la varianza della funzione integranda è
+$$ \mathrm{Var}(f)\equiv\sigma_N^2 = \frac{1}{N-1} \sum_{i=1}^N (f(x_i) - \langle f \rangle)^2$$
+la varianza di $E_N$ è quindi
+$$ \mathrm{Var}(E_N) =  \frac{V^2}{N^2} \sum_{i=1}^N \mathrm{Var}(f)  =V^2 \frac{\mathrm{Var}(f)}{N} = V^2\frac{\sigma_N^2}{N}$$
+Dal momento che le considerazioni appena fatte rimangono vere anche nel caso multidimensionale, quello che si deduce è che l'errore sulla stima dell'integrale scala come $1/\sqrt{N}$, indipendentemente dal numero di dimensioni.
+
+\subsection{Campionamento di Importanza}
+Dal punto di vista metematico, il campionamento di importanza corrisponde al cambio di variabile
+$$\int f(x) \,dx = \int\frac{f(x)}{p(x)}\,p(x)\,dx = \int\frac{f(x)}{p(x)}\,dP(x)$$
+con $$p(x)=\frac{\partial^d}{\partial x_1...\partial x_d}\,P(x)$$
+Se si restringe $p(x)$ ad essere una funzione a valori non negativi normalizzata all'unità, allora si può interpretare $p(x)$ come una densità di probabilità. Se poi si ha a disposizione un generatore di numeri casuali corrispondente alla distribuzione $P(x)$ si può anche stimare l'integrale da un sample $x_1,...,x_N$ di numeri casuali distribuiti secondo $P(x)$
+$$E_N = \frac{1}{N}\sum_{n=1}^N\frac{f(x_n)}{p(x_n)}$$
+L'errore statistico dell'integrazione Monte Carlo è dato da $\sigma(f/p)/\sqrt N$.
+
+Il campionamento di importanza è efficace se si sceglie $p(x)$ tale che approssimi bene $|f(x)|$ e tale che si sia capaci di generare numeri casuali con distribuzione di probabilità $P(x)$.
 
 \section{Esempi}
 Si dimostrano i metodi descritti nei paragrafi precedenti applicandoli al calcolo dell'integrale $$\int_1^2\log(1+x)dx$$
@@ -74,5 +94,5 @@ In figura sono rappresentati gli errori rispetto al risultato analitico dei quat
 \label{fig:integral}
 \end{figure}
 
-Come si deduce dai grafici in figura, il metodo Monte Carlo risulta il più impreciso. con un errore che oscilla anche di due ordini di grandezza. Il Monte Carlo è infatti impiegato prevalentemente in quei casi in cui la mole di calcoli da svolgere è troppo grande per poter impiegare algoritmi di tipo deterministico.
+Come previsto, il metodo Monte Carlo risulta il più impreciso. con un errore che oscilla anche di due ordini di grandezza. Il Monte Carlo è infatti impiegato prevalentemente in quei casi in cui la mole di calcoli da svolgere è troppo grande per poter impiegare algoritmi di tipo deterministico.
 Dei metodi di quadratura invece l'algoritmo di Gauss-Legendre di grado $5$ è il più preciso, con errori dell'ordine di $10^{-16}$ anche per $n$ piccolo. Infine la precisione delle formule di Newton Cotes è bassa per $n$ piccolo ma aumenta all'aumentare di $n$ e del grado dell'approssimazione.
