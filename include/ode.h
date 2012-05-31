@@ -5,6 +5,8 @@
 
 #define dt (1e-3)
 
+typedef enum { ODE_CHAOTIC, ODE_VANDERPOL, ODE_LORENZ } ODE_TYPE;
+
 double chaotic(double x,double v,double t){
     return -sin(x)-0.3*v+1.4*cos(2*t/3);
 }
@@ -59,44 +61,44 @@ void plist_erase(plist **head){
         free(tmp);
     }
 }
-#define LORENZ
-void plist_evolve_ode(plist **head_ptr, plist **tail_ptr){
+
+void plist_evolve_ode(plist **head_ptr, plist **tail_ptr, ODE_TYPE type){
     double x = 0, y = 0, z = 0, k1, k2, k3, k4;
-#ifdef CHAOTIC
-    k1 = chaotic((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->t)*dt;
-    k2 = chaotic((*head_ptr)->x,(*head_ptr)->y+k1/2,(*head_ptr)->t+dt/2)*dt;
-    k3 = chaotic((*head_ptr)->x,(*head_ptr)->y+k2/2,(*head_ptr)->t+dt/2)*dt;
-    k4 = chaotic((*head_ptr)->x,(*head_ptr)->y+k3,(*head_ptr)->t+dt)*dt;
-    y = (*head_ptr)->y + k1/6+k2/3+k3/3+k4/6;
-    x = (*head_ptr)->x + (*head_ptr)->y * dt;
-#endif
-#ifdef VANDERPOL
-    k1 = vanderpol((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->t)*dt;
-    k2 = vanderpol((*head_ptr)->x,(*head_ptr)->y+k1/2,(*head_ptr)->t+dt/2)*dt;
-    k3 = vanderpol((*head_ptr)->x,(*head_ptr)->y+k2/2,(*head_ptr)->t+dt/2)*dt;
-    k4 = vanderpol((*head_ptr)->x,(*head_ptr)->y+k3,(*head_ptr)->t+dt)*dt;
-    y = (*head_ptr)->y + k1/6+k2/3+k3/3+k4/6;
-    x = (*head_ptr)->x + (*head_ptr)->y * dt;
-#endif
-#ifdef LORENZ
-    k1 = lorenz_x((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->z)*dt;
-    k2 = lorenz_x((*head_ptr)->x+k1/2,(*head_ptr)->y,(*head_ptr)->z)*dt;
-    k3 = lorenz_x((*head_ptr)->x+k2/2,(*head_ptr)->y,(*head_ptr)->z)*dt;
-    k4 = lorenz_x((*head_ptr)->x+k3,(*head_ptr)->y,(*head_ptr)->z)*dt;
-    x = (*head_ptr)->x + k1/6+k2/3+k3/3+k4/6;
+    if(type == ODE_CHAOTIC){
+        k1 = chaotic((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->t)*dt;
+        k2 = chaotic((*head_ptr)->x,(*head_ptr)->y+k1/2,(*head_ptr)->t+dt/2)*dt;
+        k3 = chaotic((*head_ptr)->x,(*head_ptr)->y+k2/2,(*head_ptr)->t+dt/2)*dt;
+        k4 = chaotic((*head_ptr)->x,(*head_ptr)->y+k3,(*head_ptr)->t+dt)*dt;
+        y = (*head_ptr)->y + k1/6+k2/3+k3/3+k4/6;
+        x = (*head_ptr)->x + (*head_ptr)->y * dt;
+    }
+    if(type == ODE_VANDERPOL){
+        k1 = vanderpol((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->t)*dt;
+        k2 = vanderpol((*head_ptr)->x,(*head_ptr)->y+k1/2,(*head_ptr)->t+dt/2)*dt;
+        k3 = vanderpol((*head_ptr)->x,(*head_ptr)->y+k2/2,(*head_ptr)->t+dt/2)*dt;
+        k4 = vanderpol((*head_ptr)->x,(*head_ptr)->y+k3,(*head_ptr)->t+dt)*dt;
+        y = (*head_ptr)->y + k1/6+k2/3+k3/3+k4/6;
+        x = (*head_ptr)->x + (*head_ptr)->y * dt;
+    }
+    if(type == ODE_LORENZ){
+        k1 = lorenz_x((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->z)*dt;
+        k2 = lorenz_x((*head_ptr)->x+k1/2,(*head_ptr)->y,(*head_ptr)->z)*dt;
+        k3 = lorenz_x((*head_ptr)->x+k2/2,(*head_ptr)->y,(*head_ptr)->z)*dt;
+        k4 = lorenz_x((*head_ptr)->x+k3,(*head_ptr)->y,(*head_ptr)->z)*dt;
+        x = (*head_ptr)->x + k1/6+k2/3+k3/3+k4/6;
 
-    k1 = lorenz_y((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->z)*dt;
-    k2 = lorenz_y((*head_ptr)->x,(*head_ptr)->y+k1/2,(*head_ptr)->z)*dt;
-    k3 = lorenz_y((*head_ptr)->x,(*head_ptr)->y+k2/2,(*head_ptr)->z)*dt;
-    k4 = lorenz_y((*head_ptr)->x,(*head_ptr)->y+k3,(*head_ptr)->z)*dt;
-    y = (*head_ptr)->y + k1/6+k2/3+k3/3+k4/6;
+        k1 = lorenz_y((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->z)*dt;
+        k2 = lorenz_y((*head_ptr)->x,(*head_ptr)->y+k1/2,(*head_ptr)->z)*dt;
+        k3 = lorenz_y((*head_ptr)->x,(*head_ptr)->y+k2/2,(*head_ptr)->z)*dt;
+        k4 = lorenz_y((*head_ptr)->x,(*head_ptr)->y+k3,(*head_ptr)->z)*dt;
+        y = (*head_ptr)->y + k1/6+k2/3+k3/3+k4/6;
 
-    k1 = lorenz_z((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->z)*dt;
-    k2 = lorenz_z((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->z)*dt;
-    k3 = lorenz_z((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->z)*dt;
-    k4 = lorenz_z((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->z+k3)*dt;
-    z = (*head_ptr)->z + k1/6+k2/3+k3/3+k4/6;
-#endif
+        k1 = lorenz_z((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->z)*dt;
+        k2 = lorenz_z((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->z)*dt;
+        k3 = lorenz_z((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->z)*dt;
+        k4 = lorenz_z((*head_ptr)->x,(*head_ptr)->y,(*head_ptr)->z+k3)*dt;
+        z = (*head_ptr)->z + k1/6+k2/3+k3/3+k4/6;
+    }
     plist_add_front(head_ptr, x, y, z, (*head_ptr)->t+dt);
 }
 
