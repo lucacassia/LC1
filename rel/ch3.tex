@@ -3,9 +3,7 @@
 \textit{In analisi numerica i metodi Runge-Kutta sono una famiglia di metodi iterativi impliciti ed espliciti per la risuluzione approssimata di equazioni differenziali ordinarie (ODE). Il più comune di questi metodi è il cosidetto ``RK4'' o anche Runge-Kutta del quarto ordine.}
 \\\\
 Sia dato il problema di Cauchy
-\begin{center}
-$ \dot y = f(t, y), \quad y(t_0) = y_0.$
-\end{center}
+$$ \dot y = f(t, y), \quad y(t_0) = y_0.$$
 Si assume che il tempo sia discretizzato in istanti $t_n$ equidistanziati di un intervallo $h$.\\
 Il metodo RK4 per questo problema è allora dato dalle seguenti equazioni:
 \begin{eqnarray*}
@@ -30,11 +28,9 @@ Si nota dalla formula per $y_{n+1}$ che peso maggiore viene assegnato all'increm
 
 RK4 è un metodo del quarto ordine e quindi l'errore ad ogni step è dell'ordine di $h^5$, mentre l'errore totale accumulato è dell'ordine di $h^4$.
 
-\section{Il Pendolo Caotico}
+\section{Pendolo Caotico}
 Il sistema che si intende simulare è quello dell'oscillatore caotico forzato di equazione
-\begin{center}
-$\ddot{\theta} = \underbrace{\frac{g}{R}}_1 \sin(\theta)-\underbrace{\frac{k}{m}}_q \dot{\theta}+\underbrace{\frac{f}{mR}}_b \cos(\omega t)$.
-\end{center}
+$$\ddot{\theta} = \underbrace{\frac{g}{R}}_1 \sin(\theta)-\underbrace{\frac{k}{m}}_q \dot{\theta}+\underbrace{\frac{f}{mR}}_b \cos(\omega t)$$.
 È possibile rielaborare l'equazione precedente in un sistema di equazioni differenziali del primo ordine come di seguito
 $$\begin{system}
 \dot\theta&=\phi \\[1ex] \dot\phi&=\sin(\theta)-q\phi+b\cos(\omega t)
@@ -51,10 +47,8 @@ Rappresentando la traiettoria del sistema nello spazio delle fasi si ottiene
 \end{figure}
 
 \section{Oscillatore di Van Der Pol}
-Analogamente al caso dell'oscillatore caotico, si applica il metodo RK4 all'equazione del pendolo di Van Der Pol, che in questo caso è
-\begin{center}
-$\frac{d^2x}{dt^2}-\mu(1-x^2)\frac{dx}{dt}+x= 0$
-\end{center}
+Analogamente al caso dell'oscillatore caotico, si applica il metodo RK4 all'equazione del pendolo di Van Der Pol, che soddisfa l'equazione
+$$\frac{d^2x}{dt^2}-\mu(1-x^2)\frac{dx}{dt}+x= 0$$
 dove $\mu$ rappresenta l'intensità dello smorzamento. Il sistema associato è
 $$\begin{system}
 \dot x&= y\\[1ex] \dot y&=\mu(1-x^2)\frac{dx}{dt}-x

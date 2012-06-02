@@ -20,44 +20,35 @@ Dato uno stato iniziale $\phi_1$, un'iterazione dell'algoritmo consiste delle se
 \end{itemize}
 L'algoritmo Metropolis tuttavia presenta alcuni svantaggi, tra i quali il fatto che quando si raggiunge la distribuzione d'equilibrio, gli stati successivi sono in genere molto correlati. Se si vuole ottenere un unbiased sample di stati $\phi_i$ si possono quindi trascurare un numero $\tau_d$ di stati prima di passare a quello successivo. Il numero di steps $\tau_d$ viene denominato tempo di decorrelazione ed è dell'ordine di $\xi^2$, dove $\xi$ è una tipica distanza di correlazione del sistema. Ciò è dovuto al fatto che il Metropolis aggiorna gli stati localmente in maniera casuale. L'agoritmo consiste quindi nell'eseguire un random walk attraverso lo spazio delle fasi, il che richiede $\xi^2$ passaggi per effettuare uno spostamento di una distanza $\xi$ in una certa direzione.
 
-\section{L'Oscillatore Armonico Quantistico}
-Il sistema è costituito da una particella che si muove in uno spazio unidimensionale e in un reticolo temporale finito di passo $a$ e lunghezza $N$ con condizioni di periodicità al contorno. La particella interagisce inoltre con un potenziale armonico della forma $V(x) = \frac{m}{2}\omega^2 x^2$.
+\section{Oscillatore Armonico}
+Il sistema è costituito da una particella che si muove in uno spazio unidimensionale e in un reticolo temporale finito di passo $a$ e lunghezza $N$ con condizioni di periodicità al contorno. Le variabili del sistema sono quindi le coordinate $x_t$ della particella ai vari istanti di tempo $t$, con la condizione $x_N \equiv x_0$. La particella interagisce inoltre con un potenziale armonico della forma $V(x) = \frac{m}{2}\omega^2 x^2$.
 
 La relazione che si vuole verificare è quella per il correlatore delle variabili $l$-esima e $k$-esima
 \begin{center}
 \small
-$\langle X_l X_k\rangle = 2|\langle\tilde{E}_0|\hat{x}|\tilde{E}_1\rangle|^2 exp\left\{-\frac{Na}{2}(\tilde{E}_1-\tilde{E}_0)cosh\left[a\left(\frac{N}{2}-|l-k|\right)(\tilde{E}_0-\tilde{E}_1)\right]\right\}$.
+$\langle x_l x_k\rangle = 2|\langle\tilde{E}_0|\hat{x}|\tilde{E}_1\rangle|^2\exp\left\{-\frac{Na}{2}(\tilde{E}_1-\tilde{E}_0)\cosh\left[a\left(\frac{N}{2}-|l-k|\right)(\tilde{E}_0-\tilde{E}_1)\right]\right\}$.
 \end{center}
-Nel caso in esame, l'insieme delle variabili $x_t$ del sistema viene rappresentato da un array monodimensionale {\ttfamily x[i]} di {\ttfamily double}, dove l'indice {\ttfamily i} indica la posizione nel reticolo temporale, e dove si è posto $x_N \equiv x_0$.
-\section{Azione e Termalizzazione}
 
-Inizializzando il vettore della configurazione con numeri casuali è necessario lasciare del tempo al sistema per portarsi allo stato di equilibrio, dove, per l'ipotesi di ergodicità, tutte le configurazioni possibili sono equiprobabili. Tale processo, denominato termalizzazione, richiede di norma non più di 500 cicli di metropolis, eseguiti i quali sarà possibile estrarre le configurazioni con la giusta distribuzione di probabilità. Vi sono due modi di porre le condizioni iniziali:
-\begin{itemize}
-   \item[-] Cold Start : le variabili sono inizializzate a zero.
-   \item[-] Hot Start : le variabili sono inizializzate a valori random.
-\end{itemize}
+\subsection{Azione e Termalizzazione}
+
+Partendo da uno stato $\phi_0$ casuale, è necessario lasciare del tempo affinchè sistema si porti alla distribuzione di densità di probabilità di equilibrio, dove, per l'ipotesi di ergodicità, tutti gli stati accessibili sono equiprobabili. Tale processo, denominato termalizzazione, richiede in questo caso non più di 500 cicli di Metropolis, eseguiti i quali sarà possibile estrarre le configurazioni con la distribuzione desiderata. Come condizione iniziale si possono inizializzare tutte le variabili a zero (cold start) oppure a valori random (hot start).
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.5\textwidth]{action1}\includegraphics[width=0.5\textwidth]{action2}
-\caption{Azione Fredda e Calda}
+\caption{Cold start e hot start}
 \label{fig:action}
 \end{figure}
 Per il calcolo dell'azione euclidea si usa la formula
-\begin{center}$S = a\displaystyle\sum\limits_{i=0}^{N-1} \mathcal{L}(x_{i},x_{i+1})$\end{center}
+$$S = a\displaystyle\sum\limits_{i=0}^{N-1} \mathcal{L}(x_{i},x_{i+1})$$
 dove
-\begin{center}$\mathcal{L}(x_{i},x_{i+1}) = \frac{m}{2}\left(\frac{x_{i}-x_{i+1}}{a}\right)^{2}-\frac{1}{2}V(x_{i})-\frac{1}{2}V(x_{i+1})$\end{center}
-Per calcolare il $\Delta S = S'-S$ si può tenere presente il fatto che ad ogni estrazione solo una variabile di sistema viene modificata e quindi tutti i termini delle due sommatorie che non contengono quella variabile si elidono nella differenza. Pertanto si utilizza la formula ridotta
+$$\mathcal{L}(x_{i},x_{i+1}) = \frac{m}{2}\left(\frac{x_{i}-x_{i+1}}{a}\right)^{2}-\frac{1}{2}V(x_{i})-\frac{1}{2}V(x_{i+1})$$
+Tuttavia, per calcolare $\Delta S = S'-S$ si può tenere presente il fatto che ad ogni estrazione solo una variabile di sistema viene modificata e quindi tutti i termini delle due sommatorie che non contengono quella variabile si elidono nella differenza. Pertanto si utilizza la formula ridotta
 \begin{eqnarray*}
  \Delta S_i &=& a[\mathcal{L}(x_{i-1},x'_{i})+\mathcal{L}(x'_{i},x_{i+1})-\mathcal{L}(x_{i-1},x_{i})-\mathcal{L}(x_{i},x_{i+1})]\\
    &=& M[(x_{i}-x'_{i})(x_{i+1}+x_{i-1})+(x'^2_i-x^2_i)]+V(x'_i)-V(x_i)
 \end{eqnarray*}
 
-Il codice corrispondente è
-dove le variabili {\ttfamily M} e {\ttfamily W} corrispondono alla massa e alla pulsazione riscalate del fattore $a$ mentre la {\ttfamily y} argomento della funzione {\ttfamily dS()} corrisponde alla nuova variabile estratta $x'_{i}$. Si noti che le condizioni di periodicità al contorno del reticolo sono implementate attraverso l'algebra modulo N sugli indici del vettore {\ttfamily x}.
-
-Il ciclo di termalizzazione viene eseguito all'interno del {\ttfamily main()}:
-La funzione {\ttfamily metropolis()} esegue uno sweep sul vettore {\ttfamily x} delle variabili di sistema aggiornandole una alla volta con probabilità $\min(1,e^{-\Delta S_i})$, e restituendo infine la variazione di azione totale {\ttfamily DS} = {\ttfamily $\sum$ ds} = $\sum^{N-1}_{i=0}\Delta S_i$.
-La variabile $x'_i$ è estratta con una distribuzione piatta in un'intorno sferico di $x_i$ di raggio {\ttfamily D}.
+\subsection{Autocorrelazione}
 
 \begin{figure}[H]
 \centering
@@ -66,6 +57,8 @@ La variabile $x'_i$ è estratta con una distribuzione piatta in un'intorno sferi
 \label{fig:autocorrelation}
 \end{figure}
 
+\subsection{Correlazione}
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{correlation}
@@ -73,12 +66,7 @@ La variabile $x'_i$ è estratta con una distribuzione piatta in un'intorno sferi
 \label{fig:correlation}
 \end{figure}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{configuration}
-\caption{Configurazione}
-\label{fig:configuration}
-\end{figure}
+\subsection{Calcolo di $\Delta E$}
 
 \begin{figure}[H]
 \centering
@@ -93,10 +81,5 @@ La variabile $x'_i$ è estratta con una distribuzione piatta in un'intorno sferi
 \caption{Varianza di $\Delta E$}
 \label{fig:variance}
 \end{figure}
-
-\section{Autocorrelazione}
-\section{Correlazione}
-\section{Calcolo di $\Delta E$}
-\section{Calcolo dell'Elemento di Matrice}
 
 
