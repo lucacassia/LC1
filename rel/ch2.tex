@@ -3,6 +3,22 @@
 \textit{Il Metropolis è l'algoritmo più influenziale fra quelli appartenenti alla classe dei metodi Monte Carlo. Supportato da una profonda teoria, questo algoritmo costituisce uno strumento fondamentale per la scienza della computazione.}
 
 \textit{In questa sezione si propone di sviluppare un algoritmo Metropolis per simulare un oscillatore armonico quantistico e confrontare i risultati numerici con la teoria.}
+\\
+
+Il metodo Metropolis nasce dalla necessità pratica di dover generare numeri casuali distribuiti con una densità di probabilità $p(x_1,...,x_d)$, che non necessariamente fattorizza. Sia il vettore $\phi = (x_1,...,x_d)$ uno stato dell'ensamble, che vogliamo generare. L'algoritmo consiste nel partire da uno stato iniziale $\phi_0$, e sostituire iterativamente uno stato vecchio con uno nuovo, in maniera tale da ottenere la distribuzione corretta nel limite di un gran numero di iterazioni. La distribuzione che viene raggiunta all'equilibrio è indipendente dallo stato iniziale $\phi_0$. Una volta che tale distribuzione è stata raggiunta, l'applicazione ripetuta dell'algoritmo mantiene il sistema all'interno dello stesso ensamble. In altre parole, la distribuzione desiderata costituisce l'unico punto fisso dell'algoritmo.
+
+Due condizioni importanti devono essere soddisfate per poter applicare il Metropolis: Ergodicità e bilancio dettagliato. La condizione di bilancio dettagliato afferma che le probabilità di transizione $W(\phi_1\rightarrow\phi_2)$ e $W(\phi_2\rightarrow\phi_1)$ rispettano l'equazione $$p(\phi_1)W(\phi_1\rightarrow\phi_2) = p(\phi_2)W(\phi_2\rightarrow\phi_1)$$
+L'ergodicità invece richiede che ogni stato dell'ensamble possa essere raggiunto in un numero finito di steps.
+
+Dato uno stato iniziale $\phi_1$, un'iterazione dell'algoritmo consiste delle seguenti istruzioni:
+\begin{itemize}
+    \item generare casualmente un nuovo candidato $\phi'$
+    \item calcolare $\Delta S = -\log(p(\phi')/p(\phi_1))$
+    \item se $\Delta S < 0$ impostare in nuovo stato $\phi_2=\phi'$
+    \item se $\Delta S > 0$ accettare il nuovo candidato con probabilità $p(\phi')/p(\phi_1)$, altrimenti mantenere $\phi_1$
+    \item passare all'iterazione successiva
+\end{itemize}
+
 
 \section{L'Oscillatore Armonico Quantistico}
 Il sistema è costituito da una particella che si muove in uno spazio unidimensionale e in un reticolo temporale finito di passo $a$ e lunghezza $N$ con condizioni di periodicità al contorno. La particella inoltre interagisce con un potenziale armonico della forma $V(x) = \frac{m}{2}\omega^2 x^2$.
@@ -12,16 +28,15 @@ La relazione che si vuole verificare è quella per il correlatore delle variabil
 \small
 $\langle X_l X_k\rangle = 2|\langle\tilde{E}_0|\hat{x}|\tilde{E}_1\rangle|^2 exp\left\{-\frac{Na}{2}(\tilde{E}_1-\tilde{E}_0)cosh\left[a\left(\frac{N}{2}-|l-k|\right)(\tilde{E}_0-\tilde{E}_1)\right]\right\}$.
 \end{center}
-Nel caso in esame l'insieme delle variabili $x_t$ del sistema viene rappresentato da un array monodimensionale {\ttfamily x[i]} di {\ttfamily double}, dove l'indice {\ttfamily i} indica la posizione nel reticolo temporale, e dove si è posto $x_N \equiv x_0$.
+Nel caso in esame, l'insieme delle variabili $x_t$ del sistema viene rappresentato da un array monodimensionale {\ttfamily x[i]} di {\ttfamily double}, dove l'indice {\ttfamily i} indica la posizione nel reticolo temporale, e dove si è posto $x_N \equiv x_0$.
 \section{Azione e Termalizzazione}
 
 Inizializzando il vettore della configurazione con numeri casuali è necessario lasciare del tempo al sistema per portarsi allo stato di equilibrio, dove, per l'ipotesi di ergodicità, tutte le configurazioni possibili sono equiprobabili. Tale processo, denominato termalizzazione, richiede di norma non più di 500 cicli di metropolis, eseguiti i quali sarà possibile estrarre le configurazioni con la giusta distribuzione di probabilità. Vi sono due modi di porre le condizioni iniziali:
 \begin{itemize}
-   \small
-   \item[-] Azione ``fredda'' : le variabili sono inizializzate a zero.
-   \item[-] Azione ``calda'' : le variabili sono inizializzate a valori diversi da zero.
+   \item[-] Cold Start : le variabili sono inizializzate a zero.
+   \item[-] Hot Start : le variabili sono inizializzate a valori random.
 \end{itemize}
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.5\textwidth]{action1}\includegraphics[width=0.5\textwidth]{action2}
 \caption{Azione Fredda e Calda}
@@ -41,38 +56,38 @@ Il codice corrispondente è
 dove le variabili {\ttfamily M} e {\ttfamily W} corrispondono alla massa e alla pulsazione riscalate del fattore $a$ mentre la {\ttfamily y} argomento della funzione {\ttfamily dS()} corrisponde alla nuova variabile estratta $x'_{i}$. Si noti che le condizioni di periodicità al contorno del reticolo sono implementate attraverso l'algebra modulo N sugli indici del vettore {\ttfamily x}.
 
 Il ciclo di termalizzazione viene eseguito all'interno del {\ttfamily main()}:
-La funzione {\ttfamily metropolis()} esegue uno sweep sul vettore {\ttfamily x} delle variabili di sistema aggiornandole una alla volta con probabilità $min(1,e^{-\Delta S_i})$, e restituendo infine la variazione di azione totale {\ttfamily DS} = {\ttfamily $\sum$ ds} = $\sum^{N-1}_{i=0}\Delta S_i$.
+La funzione {\ttfamily metropolis()} esegue uno sweep sul vettore {\ttfamily x} delle variabili di sistema aggiornandole una alla volta con probabilità $\min(1,e^{-\Delta S_i})$, e restituendo infine la variazione di azione totale {\ttfamily DS} = {\ttfamily $\sum$ ds} = $\sum^{N-1}_{i=0}\Delta S_i$.
 La variabile $x'_i$ è estratta con una distribuzione piatta in un'intorno sferico di $x_i$ di raggio {\ttfamily D}.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{autocorrelation}
 \caption{Autocorrelazione}
 \label{fig:autocorrelation}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{correlation}
 \caption{Correlazione}
 \label{fig:correlation}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{configuration}
 \caption{Configurazione}
 \label{fig:configuration}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{histogram}
-\caption{Istogramma}
+\caption{Distribuzione di $\Delta E$}
 \label{fig:histogram}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{variance}
 \caption{Varianza di $\Delta E$}

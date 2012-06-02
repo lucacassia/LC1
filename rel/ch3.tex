@@ -40,11 +40,12 @@ $$\begin{system}
 \dot\theta&=\phi \\[1ex] \dot\phi&=\sin(\theta)-q\phi+b\cos(\omega t)
 \end{system}$$
 ed applicare ora la formula del metodo RK4 ad entrambe le equazioni.
+\\
 
 Rappresentando la traiettoria del sistema nello spazio delle fasi si ottiene
-\begin{figure}[h!]
+\begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{chaotic}
+\includegraphics[width=0.75\textwidth]{chaotic}
 \caption{Traiettoria dell'oscillatore per $q = 0.3$, $b = 1.4$, $\omega = 0.6667$}
 \label{fig:chaotic}
 \end{figure}
@@ -59,16 +60,16 @@ $$\begin{system}
 \dot x&= y\\[1ex] \dot y&=\mu(1-x^2)\frac{dx}{dt}-x
 \end{system}$$
 
-\begin{figure}[h!]
+\begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{vanderpol}
+\includegraphics[width=0.75\textwidth]{vanderpol}
 \caption{Traiettoria dell'oscillatore per $\mu = 4$}
 \label{fig:vanderpol}
 \end{figure}
 Anche in questo caso si può osservare un ciclo limite nello spazio delle fasi del sistema, ovvero una traiettoria chiusa verso la quale il sistema è portato ad evolvere.
 
-\section{Attrattore di Lorenz}
-\begin{figure}[h!]
+\section{Sistema di Lorenz}
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.33\textwidth]{lorenz0}\includegraphics[width=0.33\textwidth]{lorenz1}\includegraphics[width=0.33\textwidth]{lorenz2}
 \caption{Sistema di Lorenz in tre dimensioni}
