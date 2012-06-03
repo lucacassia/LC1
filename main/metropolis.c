@@ -67,16 +67,16 @@ int main(int argc,char* argv[]){
     rlxd_init(2,time(NULL));
     /*init stuff*/
     int cycles = 1e6; if(argc == 2) cycles = atoi(argv[1]);
-    int wid = 100; if(argc == 3) wid = atoi(argv[2]);
-    int bin = cycles/wid;
+    int width = 100; if(argc == 3) width = atoi(argv[2]);
+    int bin = cycles/width;
     int i,j,k;
     /*init mem*/
-    double* data = malloc(N*wid*bin*sizeof(double));
+    double* data = malloc(N*width*bin*sizeof(double));
     double* dtcl = malloc(N*bin*sizeof(double));
     /*init variables*/
     double x[N],c[N],var[N],tmp;
     for(i = 0; i < N; i++){
-        x[i] = 100;
+        x[i] = 0;
         c[i] = var[i] = 0;
     }
 
@@ -90,20 +90,20 @@ int main(int argc,char* argv[]){
 
     /*metropolis loop*/
     for(i = 0; i < bin; i++)
-        for(j = 0; j < wid; j++){
+        for(j = 0; j < width; j++){
             metropolis(x);
             for(k = 0; k < N; k++){
                 tmp = correlation(x,k);
-                data[(i*wid+j)*N+k] = tmp;
-                dtcl[k*bin+i] += tmp/wid;
+                data[(i*width+j)*N+k] = tmp;
+                dtcl[k*bin+i] += tmp/width;
             }
-            loading(i*wid+j,bin*wid);
+            loading(i*width+j,bin*width);
         }
 
     /*autocorrelation*/
     f = fopen("autocorrelation.dat","w");
     for(i = 0; i < 30; i++)
-        fprintf(f,"%d\t%lf\n",i,autoCorrelation(1,i,bin*wid,data));
+        fprintf(f,"%d\t%lf\n",i,autoCorrelation(1,i,bin*width,data));
     fclose(f);
     free(data);
     plot_autocorrelation();
@@ -164,17 +164,13 @@ int main(int argc,char* argv[]){
     var_dE = (var_dE*(bin-1))/bin;
     var_W = (var_W*(bin-1))/bin;
 
+#ifdef HISTOGRAM
     /*plot deltaE*/
     f = fopen("dE.dat","a");
     fprintf(f,"%lf\n",dE);
     fclose(f);
     fit();
-
-    /*plot W*/
-    f = fopen("W.dat","a");
-    fprintf(f,"%lf\n",W);
-    fclose(f);
-
+#endif
     printf("\n\n dE  = %lf\n\n sigma = %e\n\n W  = %lf\n\n sigma = %e\n\n",dE,sqrt(var_dE),W,sqrt(var_W));
 
     return 0;

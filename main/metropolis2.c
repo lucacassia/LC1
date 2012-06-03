@@ -50,8 +50,8 @@ int main(int argc,char* argv[]){
     rlxd_init(2,time(NULL));
     /*init stuff*/
     int cycles = 1e6; if(argc == 2) cycles = atoi(argv[1]);
-    int wid = 100; if(argc == 3) wid = atoi(argv[2]);
-    int bin = cycles/wid;
+    int width = 100; if(argc == 3) width = atoi(argv[2]);
+    int bin = cycles/width;
     int i,j,k;
     /*init mem*/
     double* dtcl = malloc(N*bin*sizeof(double));
@@ -68,11 +68,11 @@ int main(int argc,char* argv[]){
 
     /*metropolis loop*/
     for(i = 0; i < bin; i++)
-        for(j = 0; j < wid; j++){
+        for(j = 0; j < width; j++){
             metropolis(x);
             for(k = 0; k < N; k++)
-                dtcl[k*bin+i] += correlation(x,k)/wid;
-            loading(i*wid+j,bin*wid);
+                dtcl[k*bin+i] += correlation(x,k)/width;
+            loading(i*width+j,bin*width);
         }
 
     /*correlation*/
@@ -142,7 +142,7 @@ int main(int argc,char* argv[]){
 #endif
 
     FILE* g = fopen("var_dE.dat","a");
-    fprintf(g,"%d\t%e\n",bin*wid,var_dE);
+    fprintf(g,"%d\t%e\n",bin*width,var_dE);
     fclose(g);
     plot_var();
     printf("\n\n ΔE  = %lf\n\n σ = %e\n\n W  = %lf\n\n σ = %e\n\n",dE,sqrt(var_dE),W,sqrt(var_W));
