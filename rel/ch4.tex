@@ -1,4 +1,4 @@
-\chapter{\huge Metodo implicito}
+\chapter{\huge Metodo Implicito}
 
 \textit{Per sistemi di equazioni alle derivate parziali (PDE) esistono altri metodi oltre a quelli RK. In questa sezione si illustra e implementa il cosidetto metodo implicito per risolvere equazioni agli operatori lineari.}
 
@@ -28,7 +28,7 @@ Questa prima approssimazione tuttavia porta all'insorgere di numerosi problemi d
 Il \textbf{metodo implicito} consiste nell'approssimare l'operatore esatto $U(t)$ attraverso la formula
 $$\psi(t+dt)=(1+\frac{i}{2\hbar}Adt)^{-1}(1-\frac{i}{2\hbar}Adt)\psi(t)$$
 Utilizzando il fatto che $A$ è Hermitiano, è facile dimostrare che l'operatore della precedente formula è unitario proprio come $U(t)$.
-Per implementare questo algoritmo iterativo è necessario risolvere ad ogni step il sistema lineare
+Per implementare questo algoritmo è necessario risolvere ad ogni step il sistema lineare
 $$(1+\frac{i}{2\hbar}Adt)\psi(t+dt)=(1-\frac{i}{2\hbar}Adt)\psi(t)$$
 
 Infine si moltiplicano entrambi i membri dell'equazione per l'aggiunto dell'operatore a primo membro, in modo tale da ottenere

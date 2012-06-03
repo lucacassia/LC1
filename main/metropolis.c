@@ -83,7 +83,7 @@ int main(int argc,char* argv[]){
     /*action*/
     double S = action(x);
     FILE* f = fopen("action.dat","w");
-    for(i = 0; i < 1000; i++)
+    for(i = 0; i < 1e3; i++)
         fprintf(f,"%d\t%lf\n",(i+1),S += metropolis(x));
     fclose(f);
     plot_action();

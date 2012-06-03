@@ -28,45 +28,39 @@ Si nota dalla formula per $y_{n+1}$ che peso maggiore viene assegnato all'increm
 
 RK4 è un metodo del quarto ordine e quindi l'errore ad ogni step è dell'ordine di $h^5$, mentre l'errore totale accumulato è dell'ordine di $h^4$.
 
-\section{Pendolo Caotico}
-Il sistema che si intende simulare è quello dell'oscillatore caotico forzato di equazione
-$$\ddot{\theta} = \underbrace{\frac{g}{R}}_1 \sin(\theta)-\underbrace{\frac{k}{m}}_q \dot{\theta}+\underbrace{\frac{f}{mR}}_b \cos(\omega t)$$.
-È possibile rielaborare l'equazione precedente in un sistema di equazioni differenziali del primo ordine come di seguito
-$$\begin{system}
-\dot\theta&=\phi \\[1ex] \dot\phi&=\sin(\theta)-q\phi+b\cos(\omega t)
-\end{system}$$
-ed applicare ora la formula del metodo RK4 ad entrambe le equazioni.
-\\
+\section{Esempi}
+Per mezzo del metodo RK4 è possibile simulare l'evoluzione di sistemi dinamici, in particolare di quelli non lineari, le cui soluzioni non sono note analiticamente.
 
-Rappresentando la traiettoria del sistema nello spazio delle fasi si ottiene
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.75\textwidth]{chaotic}
-\caption{Traiettoria dell'oscillatore per $q = 0.3$, $b = 1.4$, $\omega = 0.6667$}
-\label{fig:chaotic}
-\end{figure}
-
-\section{Altri Esempi}
-Analogamente al caso dell'oscillatore caotico, si applica il metodo RK4 all'equazione del pendolo di Van Der Pol, la cui equazione è
-$$\frac{d^2x}{dt^2}-\mu(1-x^2)\frac{dx}{dt}+x= 0$$
-dove $\mu$ rappresenta l'intensità dello smorzamento. Il sistema associato è
-$$\begin{system}
-\dot x&= y\\[1ex] \dot y&=\mu(1-x^2)\frac{dx}{dt}-x
-\end{system}$$
+Esempi di sistemi dinamici che presentano comportamenti non lineari sono i sistemi di Lorenz, Rossler, Chua e di Rabinovich-Fabrikant.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.75\textwidth]{vanderpol}
-\caption{Traiettoria dell'oscillatore per $\mu = 4$}
-\label{fig:vanderpol}
-\end{figure}
-Anche in questo caso si può osservare un ciclo limite nello spazio delle fasi del sistema, ovvero una traiettoria chiusa verso la quale il sistema è portato ad evolvere.
+ \begin{subfigure}[b]{0.5\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{lorenz}
+  \caption{Lorenz}
+  \label{fig:lorenz}
+ \end{subfigure}
+ \begin{subfigure}[b]{0.5\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{rossler}
+  \caption{Rossler}
+  \label{fig:rossler}
+ \end{subfigure}
 
-\section{Sistema di Lorenz}
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.33\textwidth]{lorenz0}\includegraphics[width=0.33\textwidth]{lorenz1}\includegraphics[width=0.33\textwidth]{lorenz2}
-\caption{Sistema di Lorenz in tre dimensioni}
-\label{fig:lorenz}
+ \quad
+ \begin{subfigure}[b]{0.5\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{chua}
+  \caption{Chua}
+  \label{fig:chua}
+ \end{subfigure}
+ \begin{subfigure}[b]{0.5\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{rf}
+  \caption{Rabinovich-Fabrikant}
+  \label{fig:rf}
+ \end{subfigure}
+
+ \caption{Soluzioni numeriche di sistemi dinamici non lineari}\label{fig:systems}
 \end{figure}
 

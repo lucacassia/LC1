@@ -58,8 +58,8 @@ void distribution_init(distribution *obj, double s, double kx, double ky)
         for(j = 0; j < obj->width; j++) {
             x = i*2.0/(obj->width-1)-1;
             y = j*2.0/(obj->height-1)-1;
-            obj->psi[i*obj->width+j].re = cos(kx*x+ky*y)*expf(-((x-0.5)*(x-0.5)+y*y)/(2*s*s))/sqrt(2*3.1415926)/s;
-            obj->psi[i*obj->width+j].im = sin(kx*x+ky*y)*expf(-((x-0.5)*(x-0.5)+y*y)/(2*s*s))/sqrt(2*3.1415926)/s;
+            obj->psi[i*obj->width+j].re = cos(kx*x+ky*y)*expf(-(pow(y-0.5,2)+pow(x-0.5,2))/(2*s*s))/sqrt(2*3.1415926)/s;
+            obj->psi[i*obj->width+j].im = sin(kx*x+ky*y)*expf(-(pow(y-0.5,2)+pow(x-0.5,2))/(2*s*s))/sqrt(2*3.1415926)/s;
     }
 }
 

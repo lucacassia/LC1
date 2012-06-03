@@ -5,7 +5,7 @@
 
 #define dt (1e-3)
 
-typedef enum { ODE_CHAOTIC, ODE_VANDERPOL, ODE_DUFFING, ODE_LORENZ, ODE_ROSSLER, ODE_RABINOVICH_FABRIKANT } ODE_TYPE;
+typedef enum { ODE_CHAOTIC, ODE_VANDERPOL, ODE_DUFFING, ODE_LORENZ, ODE_ROSSLER, ODE_RABINOVICH_FABRIKANT, ODE_CHUA } ODE_TYPE;
 
 double dummy(double x,double y, double z,double t) {return 0;}
 
@@ -29,6 +29,10 @@ double rossler_z(double x,double y,double z, double t) {return 0.1+z*(x-14);}
 double rabinovich_fabrikant_x(double x,double y,double z, double t) {return y*(z-1+pow(x,2))+0.87*x;}
 double rabinovich_fabrikant_y(double x,double y,double z, double t) {return x*(3*z+1-pow(x,2))+0.87*y;}
 double rabinovich_fabrikant_z(double x,double y,double z, double t) {return -2*z*(1.1+x*y);}
+
+double chua_x(double x,double y,double z, double t) {return 9.5*(y+(x-2*pow(x,3))/7);}
+double chua_y(double x,double y,double z, double t) {return x-y+z;}
+double chua_z(double x,double y,double z, double t) {return -100*y/7;}
 
 typedef struct _plist{
     double x,y,z,t;
@@ -100,6 +104,11 @@ void plist_evolve_ode(plist **head_ptr, plist **tail_ptr, ODE_TYPE type){
             function_x = rabinovich_fabrikant_x;
             function_y = rabinovich_fabrikant_y;
             function_z = rabinovich_fabrikant_z;
+            break;
+        case ODE_CHUA:
+            function_x = chua_x;
+            function_y = chua_y;
+            function_z = chua_z;
             break;
     }
 

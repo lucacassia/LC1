@@ -50,7 +50,10 @@ void savePPM(unsigned char *frame)
 {
     FILE *f = fopen("image.ppm", "wb");
     fprintf(f, "P6\n%d %d\n255\n", width, height);
-    fwrite(frame, 1, 3 * width * height, f);
+    int i,j;
+    for(i = height-1; i >= 0; i--)
+        for(j = 0; j < width; j++)
+            fwrite(&frame[(i*width+j)*3], sizeof(unsigned char), 3, f);
     fclose(f);
 }
 
@@ -243,7 +246,9 @@ void display()
 #ifdef PIPE
       frame = (unsigned char*)malloc(3*width*height*sizeof(unsigned char));
       glReadPixels(0,0,width,height,GL_RGB,GL_UNSIGNED_BYTE,frame);
-      fwrite(frame, sizeof(unsigned char), 3*(complexSurface->size), stdout);
+      for(int i = height-1; i >= 0; i--)
+          for(int j = 0; j < width; j++)
+              fwrite(&frame[(i*width+j)*3], sizeof(unsigned char), 3, stdout);
       free(frame);
 #endif
   glUseProgram(program);
@@ -394,7 +399,7 @@ void keyboard(unsigned char key, int x, int y)
 int main(int argc, char* argv[]) {
 
   complexSurface = distribution_alloc(N,N);
-  distribution_init(complexSurface,0.1,-1,0);
+  distribution_init(complexSurface,0.1,0,0);
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_RGBA|GLUT_DEPTH|GLUT_DOUBLE);
