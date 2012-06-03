@@ -6,19 +6,20 @@
 #include <string.h>
 #include "complex_t.h"
 
-//#define WAVE
-//#define WELL
-
 double dt = 1.0;
 double mass = 1.0;
 double omega  = 1.0;
 double hbar = 1.0;
-double potential(double x,double y){
-/*
+
+double harmonic(double x,double y){ return mass*omega*omega*((x)*(x)+(y)*(y))/2.0; }
+
+double well(double x,double y){
     if(hypot(x,y)<0.1)
         return -100;
     return 0;
-}*/return mass*omega*omega*((x)*(x)+(y)*(y))/2.0; }
+}
+
+double (*potential)(double,double) = harmonic;
 
 typedef struct{
     int width,height,size;
@@ -104,8 +105,8 @@ void distribution_compute(distribution *obj)
     memcpy(obj->psi, x, n * sizeof(complex_t));
     free(x);
 #else
-//    normalize(obj->psi,n);
-//    printf("\nnorm(psi)² = %14.10e\n",norm(obj->psi,n)*norm(obj->psi,n));
+    normalize(obj->psi,n);
+
     complex_t *M = (complex_t*)malloc(n * sizeof(complex_t));
     complex_t *A = (complex_t*)malloc(n * sizeof(complex_t));
     complex_t *A2 = (complex_t*)malloc(n * sizeof(complex_t));
@@ -161,13 +162,7 @@ void distribution_compute(distribution *obj)
     free(A2);
     free(r);
     free(p);
-#endif
-#ifdef WELL
-    for(i = 0; i < h; i++)
-        for(j = 0; j < w; j++)
-            if(hypot(i*2.0/h-1,j*2.0/w-1)>1)
-                obj->psi[i*w+j] = COMPLEX_ZERO;
+
 #endif
 }
-
 #endif

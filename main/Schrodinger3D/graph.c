@@ -9,6 +9,7 @@
 #include "shader_utils.h"
 #include "distribution.h"
 
+#define PIPE
 #define N 256
 
 distribution *complexSurface;
@@ -45,7 +46,7 @@ struct point {
 GLbyte graph[N][N];
 unsigned char *frame = NULL;
 
-void saveToFile(unsigned char *frame)
+void savePPM(unsigned char *frame)
 {
     FILE *f = fopen("image.ppm", "wb");
     fprintf(f, "P6\n%d %d\n255\n", width, height);
@@ -235,10 +236,14 @@ void display()
     distribution_compute(complexSurface);
     setupTexture();
   }
+  int viewport[4];
+  glGetIntegerv(GL_VIEWPORT,viewport);
+  width = viewport[2];
+  height = viewport[3];
 #ifdef PIPE
-      frame = (unsigned char*)malloc(3*width*height*sizeof(float));
+      frame = (unsigned char*)malloc(3*width*height*sizeof(unsigned char));
       glReadPixels(0,0,width,height,GL_RGB,GL_UNSIGNED_BYTE,frame);
-      fwrite(frame, sizeof(char), 3*(complexSurface->size), stdout);
+      fwrite(frame, sizeof(unsigned char), 3*(complexSurface->size), stdout);
       free(frame);
 #endif
   glUseProgram(program);
@@ -332,9 +337,9 @@ void special(int key, int x, int y)
       modeView = 2;
       break;
     case GLUT_KEY_F8:
-      frame = (unsigned char*)malloc(3*width*height*sizeof(float));
+      frame = (unsigned char*)malloc(3*width*height*sizeof(unsigned char));
       glReadPixels(0,0,width,height,GL_RGB,GL_UNSIGNED_BYTE,frame);
-      saveToFile(frame);
+      savePPM(frame);
       free(frame);
       break;
     case GLUT_KEY_F11:
@@ -389,7 +394,7 @@ void keyboard(unsigned char key, int x, int y)
 int main(int argc, char* argv[]) {
 
   complexSurface = distribution_alloc(N,N);
-  distribution_init(complexSurface,0.1,-100,0);
+  distribution_init(complexSurface,0.1,-1,0);
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_RGBA|GLUT_DEPTH|GLUT_DOUBLE);
