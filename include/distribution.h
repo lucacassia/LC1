@@ -13,13 +13,20 @@ double hbar = 1.0;
 
 double harmonic(double x,double y){ return mass*omega*omega*((x)*(x)+(y)*(y))/2.0; }
 
+double mix(double x,double y){
+    if(hypot(x,y)<0.1)
+        return 0.2;
+    else
+        return mass*omega*omega*((x)*(x)+(y)*(y))/2.0;
+}
+
 double well(double x,double y){
     if(hypot(x,y)<0.1)
         return -100;
     return 0;
 }
 
-double (*potential)(double,double) = harmonic;
+double (*potential)(double,double) = mix;
 
 typedef struct{
     int width,height,size;

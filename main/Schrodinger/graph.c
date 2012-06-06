@@ -9,7 +9,7 @@
 #include "shader_utils.h"
 #include "distribution.h"
 
-#define PIPE
+//#define PIPE
 #define N 256
 
 distribution *complexSurface;

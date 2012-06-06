@@ -140,16 +140,17 @@ int main(int argc,char* argv[]){
     fprintf(f,"%lf\n",W);
     fclose(f);
 #endif
-
+#ifdef VAR
     FILE* g = fopen("var_dE.dat","a");
     fprintf(g,"%d\t%e\n",bin*width,var_dE);
     fclose(g);
     plot_var();
     printf("\n\n ΔE  = %lf\n\n σ = %e\n\n W  = %lf\n\n σ = %e\n\n",dE,sqrt(var_dE),W,sqrt(var_W));
+#endif
 
 #endif
 
-    plot_var();
+    fit();
 
     return 0;
 }

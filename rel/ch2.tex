@@ -22,17 +22,23 @@ L'algoritmo Metropolis tuttavia presenta alcuni svantaggi, tra i quali il fatto 
 
 \section{Oscillatore Armonico}
 Il sistema è costituito da una particella che si muove in uno spazio unidimensionale e in un reticolo temporale finito di passo $a$ e lunghezza $N$ con condizioni di periodicità al contorno. Le variabili del sistema sono quindi le coordinate $x_t$ della particella ai vari istanti di tempo $t$, con la condizione $x_N \equiv x_0$. La particella interagisce inoltre con un potenziale armonico della forma $V(x) = \frac{m}{2}\omega^2 x^2$.
+\\
 
-La relazione che si vuole verificare è quella per il correlatore delle variabili $l$-esima e $k$-esima
+In meccanica quantistica la stima di un osservabile può essere estratta dalle funzioni di correlazione fra gli stati del sistema.
+Si calcola quindi il correlatore delle variabili $l$-esima e $k$-esima $\langle x_lx_k\rangle$, definito dalla formula
+$$\langle x_lx_k\rangle=\frac{\int Dx\ x_lx_ke^{-S_E}}{\int Dx\ e^{-S_E}}$$
+Calcolare il correlatore significa calcolare un \textit{path integral} usando come ampiezza di probabilità il fattore $e^{-S_E}$. Il ruolo dell'algoritmo Metropolis è dunque quello di generare configurazioni del sistema con distribuzione di ampiezza di probabilità $e^{-S_E}$.
+\\
+
+Dopo aver ottenuto una stima per il correlatore delle variabili $x_l$ e $x_k$ per ogni combinazione di $(l,k)$, si ricavano infine i valori di $\Delta E=(\tilde{E}_1-\tilde{E}_0)$ e dell'elemento di matrice $W=\langle\tilde{E}_0|\hat{x}|\tilde{E}_1\rangle$ attraverso la relazione
 \begin{center}
 \small
-$\langle x_l x_k\rangle = 2|\langle\tilde{E}_0|\hat{x}|\tilde{E}_1\rangle|^2\exp\left\{-\frac{Na}{2}(\tilde{E}_1-\tilde{E}_0)\cosh\left[a\left(\frac{N}{2}-|l-k|\right)(\tilde{E}_0-\tilde{E}_1)\right]\right\}$.
+$\langle x_l x_k\rangle = 2|\langle\tilde{E}_0|\hat{x}|\tilde{E}_1\rangle|^2\exp\left(-\frac{Na}{2}(\tilde{E}_1-\tilde{E}_0)\right)\cosh\left[a\left(\frac{N}{2}-|l-k|\right)(\tilde{E}_0-\tilde{E}_1)\right]$.
 \end{center}
-Dopo aver calcolato il correlatore per ogni combinazione di $(l,k)$ sarà infine possibile ricavare il valore di $\Delta E=(\tilde{E}_1-\tilde{E}_0)$ e dell'elemento di matrice $W=\langle\tilde{E}_0|\hat{x}|\tilde{E}_1\rangle$, con i relativi errori.
 
 \subsection{Azione e Termalizzazione}
 
-Partendo da uno stato $\phi_0$ casuale, è necessario lasciare del tempo affinchè sistema si porti alla distribuzione di densità di probabilità di equilibrio, dove, per l'ipotesi di ergodicità, tutti gli stati accessibili sono equiprobabili. Tale processo, denominato termalizzazione, richiede in questo caso non più di 500 cicli di Metropolis, eseguiti i quali sarà possibile estrarre le configurazioni con la distribuzione desiderata. Come condizione iniziale si possono inizializzare tutte le variabili a zero (cold start) oppure a valori random (hot start).
+Partendo da uno stato $\phi_0$ casuale, è necessario lasciare del tempo affinchè sistema si porti alla $pdf$ di equilibrio, dove, per l'ipotesi di ergodicità, tutti gli stati accessibili sono equiprobabili. Tale processo, denominato termalizzazione, richiede in questo caso non più di 500 cicli di Metropolis, eseguiti i quali sarà possibile estrarre le configurazioni con la distribuzione desiderata. Come condizione iniziale si possono inizializzare tutte le variabili a zero (cold start) oppure a valori random (hot start).
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.5\textwidth]{action1}\includegraphics[width=0.5\textwidth]{action2}
@@ -46,24 +52,35 @@ $$\mathcal{L}(x_{i},x_{i+1}) = \frac{m}{2}\left(\frac{x_{i}-x_{i+1}}{a}\right)^{
 Tuttavia, per calcolare $\Delta S = S'-S$ si può tenere presente il fatto che ad ogni estrazione solo una variabile di sistema viene modificata e quindi tutti i termini delle due sommatorie che non contengono quella variabile si elidono nella differenza. Pertanto si utilizza la formula ridotta
 \begin{eqnarray*}
  \Delta S_i &=& a[\mathcal{L}(x_{i-1},x'_{i})+\mathcal{L}(x'_{i},x_{i+1})-\mathcal{L}(x_{i-1},x_{i})-\mathcal{L}(x_{i},x_{i+1})]\\
-   &=& M[(x_{i}-x'_{i})(x_{i+1}+x_{i-1})+(x'^2_i-x^2_i)]+V(x'_i)-V(x_i)
+   &=& \tfrac{m}{a}[(x_{i}-x'_{i})(x_{i+1}+x_{i-1})+(x'^2_i-x^2_i)]+aV(x'_i)-aV(x_i)
 \end{eqnarray*}
+
+È facile verificare che l'algoritmo e i risultati possono essere resi indipendenti dal fattore di reticolo $a$ se si ridefiniscono propriamente i parametri del problema, il che è equivalente a porre $a=1$.
 
 \subsection{Autocorrelazione}
 
+Si studia ora la correlazione tra configurazioni generate a step consecutivi dell'algoritmo per ottenere una stima del tempo di decorrelazione $\tau_d$ del sistema. Tale dipendenza fra elementi della catena viene anche denominata \textit{autocorrelazione}.
+
+La formula per il correlatore di due stime dell'osservabile $O$ calcolate da stati estratti a istanti di tempo distanti $k$ è
+$$R(k)=\frac{\langle O_iO_{i+k}\rangle-\langle O_i\rangle^2}{\langle O_i^2\rangle-\langle O_i\rangle^2}=\frac{\frac{\sum\limits_{i=0}^{n-k}O_iO_{i+k}}{n-k}-\langle O_i\rangle^2}{\langle O_i^2\rangle-\langle O_i\rangle^2}$$
+
+Il grafico dell'autocorrelazione $R(k)$ per l'osservabile $O(|l-k|)=\langle x_lx_k\rangle$ evidenzia la perdita esponenziale di correlazione nel segnale.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{autocorrelation}
-\caption{Autocorrelazione}
+\caption{Autocorrelazione dell'osservabile $\langle x_lx_k\rangle$ per $|l-k|=1$}
 \label{fig:autocorrelation}
 \end{figure}
+Il tempo di decorrelazione $\tau_d$ è dell'ordine delle unità ($\sim3$) e quindi, per $k>5\tau_d$ il segnale può essere considerato praticamente scorrelato.
 
 \subsection{Correlazione}
+
+Si calcola numericamente l'integrale $\int Dx \ x_lx_ke^{-S_E}$ applicano i metodi Monte Carlo e Metropolis in congiunzione. Affinchè le configurazioni utilizzate siano statisticamente indipendenti, ogni $n_bin$ estrazioni si calcola la media prende la loro media come 
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{correlation}
-\caption{Correlazione}
+\caption{Correlazione tra coordinate in funzione della loro separazione temporale}
 \label{fig:correlation}
 \end{figure}
 

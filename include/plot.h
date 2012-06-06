@@ -99,7 +99,7 @@ void fit(){
 	FILE *pipe = popen("gnuplot -persist","w");
 	fprintf(pipe, "reset\n");
 	fprintf(pipe, "set border linewidth 1.5\n");
-	fprintf(pipe, "set style line 1 lc rgb '#aa5500' lt 1 lw 3 pt 7 ps 0.5 # --- red\n");
+	fprintf(pipe, "set style line 1 lc rgb '#0060ad' lt 1 lw 3 pt 7 ps 0.5 # --- red\n");
 	fprintf(pipe, "set grid\n");
 	fprintf(pipe, "set title \"Metropolis\"\n");
 	fprintf(pipe, "set tics out nomirror\n");
@@ -124,7 +124,7 @@ void fit(){
 	fprintf(pipe, "set style fill solid 0.5\t#fillstyle\n");
 	fprintf(pipe, "set tics out nomirror\n");
 	fprintf(pipe, "ti = sprintf(\"Gaussian Fit:\\n{/Symbol m} = %%f; {/Symbol s} = %%f\", m, s)\n");
-	fprintf(pipe, "plot 'dE.dat' u (hist($1,width)):(1.0) smooth freq w boxes lc rgb '#ddcccc' title 'Binned data',f(x) w l ls 1 title ti\n");
+	fprintf(pipe, "plot 'dE.dat' u (hist($1,width)):(1.0) smooth freq w boxes lc rgb '#87b2d7' title 'Binned data',f(x) w l ls 1 title ti\n");
 	fclose(pipe);
     system("rm fit.log");
     system("rm bin.dat");
