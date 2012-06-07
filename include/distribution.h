@@ -15,7 +15,7 @@ double harmonic(double x,double y){ return mass*omega*omega*((x)*(x)+(y)*(y))/2.
 
 double mix(double x,double y){
     if(hypot(x,y)<0.1)
-        return 0.2;
+        return 0.05;
     else
         return mass*omega*omega*((x)*(x)+(y)*(y))/2.0;
 }

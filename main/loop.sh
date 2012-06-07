@@ -1,9 +1,9 @@
 #!/bin/bash
 
-for (( i=10; i<=1100; i+=10 ))
+for (( i=10; i<=11000; i+=10 ))
 do
   echo "loop $i"
-  ./integral $i
+  ./pi $i
   echo
 done
 

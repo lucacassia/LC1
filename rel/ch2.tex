@@ -73,18 +73,24 @@ Il grafico dell'autocorrelazione $R(k)$ per l'osservabile $O(|l-k|)=\langle x_lx
 \end{figure}
 Il tempo di decorrelazione $\tau_d$ è dell'ordine delle unità ($\sim3$) e quindi, per $k>5\tau_d$ il segnale può essere considerato praticamente scorrelato.
 
-\subsection{Correlazione}
+\subsection{Funzioni di Correlazione}
 
-Si calcola numericamente l'integrale $\int Dx \ x_lx_ke^{-S_E}$ applicano i metodi Monte Carlo e Metropolis in congiunzione. Affinchè le configurazioni utilizzate siano statisticamente indipendenti, ogni $n_bin$ estrazioni si calcola la media prende la loro media come 
+Si calcola numericamente l'integrale $\int Dx \ x_lx_ke^{-S_E}$ applicano i metodi Monte Carlo e Metropolis in congiunzione. Affinchè le configurazioni utilizzate siano statisticamente indipendenti, si raggruppano i sample in $bin$ (\textit{clusterization}) e si utilizza l'insieme delle medie su ogni $bin$ come ensamble di configurazioni per il calcolo MC. In questo modo, se la dimensione dei $bin$ è molto maggiore di $\tau_d$, la media sul $bin$ attenua considerevolmente gli effetti di correlazione e perciò il nuovo ensamble può essere considerato statisticamente libero.
+
+La media di un generico osservabile $O$ calcolata in questo modo è analiticamente uguale a quella calcolata per mezzo di ogni sample di ogni $bin$, tuttavia, per calcolare la varianza, bisogna ricorrere alla tecnica del \textit{cluster jackknife} descritta di seguito.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{correlation}
-\caption{Correlazione tra coordinate in funzione della loro separazione temporale}
+\caption{L'andamento del correlatore delle coordinate in funzione della loro separazione nel reticolo temporale è quello di un coseno iperbolico centrato in $|l-k|=\tfrac{N}{2}$.}
 \label{fig:correlation}
 \end{figure}
 
-\subsection{Calcolo di $\Delta E$}
+Si definisce $o_i$ la stima semplice (calcolata su una singola estrazione) dell'osservabile $O$ allo step $i$. La tecnica \textit{cluster jackknife} consiste nel ricavare le grandezze derivate $o^i$ definite come $$o^i=\langle o\rangle_{bin}+\tfrac{1}{N_{bin}-1}(\langle o\rangle_{bin}-o_i)$$ dove $N_{bin}$ indica il numero totale di $bin$.
+
+
+
+\subsection{Calcolo di Grandezze Quanto-Meccaniche Secondarie}
 
 \begin{figure}[H]
 \centering
