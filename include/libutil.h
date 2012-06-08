@@ -13,23 +13,22 @@ void loading(int i,int n){
 }
 
 void binning(){
-    int i, n = 125;
-    double min = 0.93, max = 0.99, width = (max-min)/n, tmp;
-    int* freq = malloc(n*sizeof(int));
-    for(i = 0; i < n; i++)
+    unsigned int i, count = 0, freq[125];
+    double min = 0.93, max = 0.99, width = (max-min)/125, tmp;
+    for(i = 0; i < 125; i++)
         freq[i] = 0;
     FILE* f = fopen("histogram.dat","r");
-    while(fscanf(f, "%lf\n", &tmp))
-        for(i = 0; i < n; i++)
+    while(fscanf(f, "%lf\n", &tmp)==1){
+        count++;
+        for(i = 0; i < 125; i++)
             if(tmp > min+i*width && tmp <= min+(i+1)*width)
                 freq[i]++;
+    }
     fclose(f);
     f = fopen("bin.dat","w");
-    for(i = 0; i < n; i++)
-//        if(freq[i] > 10)
-            fprintf(f, "%lf\t%d\n", min+(i+0.5)*width, freq[i]);
+    for(i = 0; i < 125; i++)
+        fprintf(f, "%14.10e\t%14.10e\n", min+(i+0.5)*width, freq[i]/width/count);
     fclose(f);
-    free(freq);
 }
 
 #endif

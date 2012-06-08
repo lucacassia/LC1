@@ -19,7 +19,7 @@ all: rmxeq mkdep mkxeq rmpmk
 
 # main programs and required modules 
 
-MAIN = derive integral pi metropolis metropolis2 ode
+MAIN = derive integral pi metropolis ode
 
 RANDOM = ranlxs ranlxd gauss
 

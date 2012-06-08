@@ -168,6 +168,7 @@ int main(int argc,char* argv[]){
     fclose(f);
     binning();
 #endif
+    binning();
     printf("\n\n dE  = %14.10lf\n\n sigma = %14.10lf\n\n W  = %14.10lf\n\n sigma = %14.10lf\n\n",dE,sqrt(var_dE),W,sqrt(var_W));
 
     return 0;

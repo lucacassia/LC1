@@ -9,7 +9,7 @@
 #include "shader_utils.h"
 #include "distribution.h"
 
-#define PIPE
+//#define PIPE
 #define N 256
 
 distribution *complexSurface;
@@ -25,6 +25,7 @@ GLint uniform_mytexture;
 float offset_x = 0.0;
 float offset_y = 0.0;
 float scale = 1.0;
+float amplitude = 10.0;
 
 bool interpolate = true;
 bool clamp = false;
@@ -60,7 +61,6 @@ void savePPM(unsigned char *frame)
 void setupTexture()
 {
   // Create our datapoints, store it as bytes
-  double max = 0;
   for(int i = 0; i < N; i++) {
     for(int j = 0; j < N; j++) {
       double z = 0;
@@ -75,25 +75,7 @@ void setupTexture()
           z = (complexSurface->psi[i*N+j]).im;
           break;
       }
-      if(fabs(z)>max)
-        max = fabs(z);
-    }
-  }
-  for(int i = 0; i < N; i++) {
-    for(int j = 0; j < N; j++) {
-      double z = 0;
-      switch(modeView){
-        case 0:
-          z = _complex_mod(complexSurface->psi[i*N+j]);
-          break;
-        case 1:
-          z = (complexSurface->psi[i*N+j]).re;
-          break;
-        case 2:
-          z = (complexSurface->psi[i*N+j]).im;
-          break;
-      }
-      graph[i][j] = roundf(z/max * 127 + 128);
+      graph[i][j] = roundf(z * amplitude * 127 + 128);
     }
   }
 
@@ -372,6 +354,7 @@ void special(int key, int x, int y)
       offset_x = 0.0;
       offset_y = 0.0;
       scale = 1.0;
+      amplitude = 10.0;
       break;
   }
   glutPostRedisplay();
@@ -392,6 +375,12 @@ void keyboard(unsigned char key, int x, int y)
             exit(EXIT_SUCCESS);
         case ' ':
             active =! active;
+            break;
+        case '+':
+            amplitude *= 1.5;
+            break;
+        case '-':
+            amplitude /= 1.5;
             break;
     }
 }

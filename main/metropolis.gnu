@@ -1,7 +1,8 @@
 reset
 set term postscript enhanced color landscape lw 1 "Verdana,10"
 set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5 # --- indigo
-set style line 2 lc rgb '#bf0d23' lt 1 lw 1 pt 7 ps 0.5 # --- red
+set style line 2 lc rgb '#0060ad' lt 1 lw 1 pt 7 ps 0.5 # --- indigo
+set style line 3 lc rgb '#bf0d23' lt 1 lw 1 pt 7 ps 0.5 # --- red
 set border linewidth 1.5
 set grid
 unset key
@@ -13,6 +14,7 @@ set ylabel "S"
 set log x
 set output 'action.eps'
 plot 'action.dat' with linespoints ls 2
+unset logscale
 
 #CORRELATION
 set xlabel "{/Symbol D}t"
@@ -32,8 +34,10 @@ set xlabel "sweep number"
 set ylabel "{/Symbol s^2}"
 set output 'variance.eps'
 plot 'variance.dat' pt 6 ps 1.5 lc rgb '#000022' title 'variance'
+unset logscale
 
 #HISTOGRAM
+set key
 set tics out nomirror
 set xlabel "{/Symbol D}E"
 set ylabel "Frequency"

@@ -152,7 +152,7 @@ void distribution_compute(distribution *obj)
             _complex_sub(r[i], r[i], tmp);
         }
         rs = norm(r,n);
-        if(rs/b < 1e-10) break;
+        if(rs/b < 1e-6) break;
         evaluateM(A2, r, w, h);
         tmp = scalar(r,A2,n);
         _complex_div(beta, tmp, rAr);
