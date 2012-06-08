@@ -1,0 +1,51 @@
+\documentclass[a4paper,11pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[OT1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{fancyhdr}
+\usepackage{indentfirst}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{vicent}
+\usepackage{float}
+
+\newenvironment{system}{\left\lbrace \begin{aligned}}{\end{aligned}\right.}
+
+\title{\bfseries{\Huge{Laboratorio di Fisica Computazionale}}}
+\author{\cursiveshape {Luca Cassia - [MAT. 728341]}}
+
+\date{Spring 2012}
+
+\pagestyle{fancy}\addtolength{\headwidth}{20pt}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection \ #1}{}}
+\cfoot{}
+
+\rhead[\fancyplain{}{\bfseries\leftmark}]{\fancyplain{}{\bfseries\thepage}}
+\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\input{ch1.tex}
+\input{ch2.tex}
+\input{ch3.tex}
+\input{ch4.tex}
+
+\begin{thebibliography}{9}
+\addcontentsline{toc}{chapter}{Bibliografia}
+\bibitem{uno} M. Abramowitz, I. A. Stegun. ``§25.4, Integration'', \textit{Handbook of Mathematical Functions (with Formulas, Graphs, and Mathematical Tables)}, 1972
+\bibitem{due} M. Hjorth-Jensen. ``§9, Random walks and the Metropolis algorithm'', \textit{Computational Physics}, 2009
+\bibitem{tre} I. Beichl, F. Sullivan. \textit{Computing in Science and Engineering}, 2000
+\bibitem{quattro} Y. Saad. ``§6.8, The Conjugate Residual Method'', \textit{Iterative Methods for Sparse Linear Systems}, 2003
+\bibitem{cinque} C. Rebbi. \textit{Lecture Notes on Advanced Computing in Physics}, 1996
+\bibitem{sei} S. Weinzierl. \textit{Introduction to Monte Carlo methods}, 2000
+\bibitem{sette} M. Creutz, B. Freedman. \textit{A Statistical Approach to Quantum Mechanics}, 1980
+\bibitem{otto} C. Morningstar. \textit{The Monte Carlo Method in Quantum Mechanics}, 2004
+\end{thebibliography} 
+
+\end{document}

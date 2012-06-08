@@ -1,0 +1,19 @@
+\select@language {italian}
+\contentsline {chapter}{\numberline {1}\relax \fontsize {20.74}{25}\selectfont Integrazione Numerica}{2}
+\contentsline {section}{\numberline {1.1}Newton-Cotes}{2}
+\contentsline {section}{\numberline {1.2}Quadrature Gaussiane}{3}
+\contentsline {subsection}{\numberline {1.2.1}Integrazione Composta}{5}
+\contentsline {section}{\numberline {1.3}Monte Carlo}{5}
+\contentsline {subsection}{\numberline {1.3.1}Campionamento di Importanza}{5}
+\contentsline {section}{\numberline {1.4}Esempi}{6}
+\contentsline {chapter}{\numberline {2}\relax \fontsize {20.74}{25}\selectfont Algoritmo Metropolis}{8}
+\contentsline {section}{\numberline {2.1}Oscillatore Armonico}{9}
+\contentsline {subsection}{\numberline {2.1.1}Azione e Termalizzazione}{10}
+\contentsline {subsection}{\numberline {2.1.2}Autocorrelazione}{10}
+\contentsline {subsection}{\numberline {2.1.3}Funzioni di Correlazione}{11}
+\contentsline {subsection}{\numberline {2.1.4}Calcolo di Grandezze Quanto-Meccaniche Secondarie}{13}
+\contentsline {chapter}{\numberline {3}\relax \fontsize {20.74}{25}\selectfont Metodo Runge-Kutta}{15}
+\contentsline {section}{\numberline {3.1}Sistemi Dinamici}{16}
+\contentsline {chapter}{\numberline {4}\relax \fontsize {20.74}{25}\selectfont Metodo Implicito}{17}
+\contentsline {section}{\numberline {4.1}Equazione di Schr\"{o}dinger}{18}
+\contentsline {chapter}{Bibliografia}{20}
