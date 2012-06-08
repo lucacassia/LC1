@@ -89,10 +89,23 @@ Si dimostrano i metodi descritti nei paragrafi precedenti applicandoli al calcol
 In figura sono rappresentati gli errori rispetto al risultato analitico dei quattro metodi analizzati in funzione del numero di sottointervalli utilizzati per i metodi di quadratura numerica o del numero di iterazioni per il metodo Monte Carlo.
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{integral}
+\includegraphics[width=0.75\textwidth]{integral}
 \caption{Errore calcolato}
 \label{fig:integral}
 \end{figure}
 
-Come previsto, il metodo Monte Carlo risulta il più impreciso. con un errore che oscilla anche di due ordini di grandezza. Il Monte Carlo è infatti impiegato prevalentemente in quei casi in cui la mole di calcoli da svolgere è troppo grande per poter impiegare algoritmi di tipo deterministico.
-Dei metodi di quadratura invece l'algoritmo di Gauss-Legendre di grado $5$ è il più preciso, con errori dell'ordine di $10^{-15}$ anche per $n$ piccolo. Al di sotto di $10^{-15}$ l'errore diventa instabile a causa della precisione finita del calcolatore. Infine la precisione delle formule di Newton Cotes è bassa per $n$ piccolo ma aumenta all'aumentare di $n$ e del grado dell'approssimazione.
+Dei metodi di quadratura l'algoritmo di Gauss-Legendre di grado $5$ è il più preciso, con errori dell'ordine di $10^{-15}$ anche per $n$ piccolo. Al di sotto di $10^{-15}$ l'errore diventa instabile a causa della precisione finita del calcolatore. La precisione delle formule di Newton Cotes invece è bassa per $n$ piccolo ma aumenta all'aumentare di $n$ e del grado dell'approssimazione.
+
+Come previsto, il metodo Monte Carlo risulta il più impreciso, con un errore di molti ordini di grandezza superiore a quello dei metodi di quadratura. Il Monte Carlo è infatti impiegato prevalentemente in quei casi in cui la dimensione dell'insieme di integrazione è troppo grande per poter impiegare algoritmi di tipo deterministico.
+\\
+
+La distribuzione dell'errore MC in funzione del numero di samples, calcolata sull'integrale
+$$\int_\Omega d\mu = \tfrac{\pi}{4}$$
+dove $\Omega$ indica il primo quarto di circonferenza goniometrica, verifica la relazione $\sigma_{MC}=1/\sqrt N$ (figura \ref{fig:pi}).
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{pi}
+\caption{Errore MC in funzione del numero di samples}
+\label{fig:pi}
+\end{figure}
+

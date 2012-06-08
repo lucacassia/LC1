@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     unsigned i, n = 10;
     if(argc > 1) n = atoi(argv[1]);
     rlxd_init(2,time(NULL));
-    FILE *f = fopen("data.dat","a");
+    FILE *f = fopen("integral.dat","a");
 
     for(S = i = 0; i < n; i++)
         S += newton_cotes1(function, a+i*(b-a)/n, a+(i+1)*(b-a)/n);

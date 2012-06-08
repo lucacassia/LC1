@@ -44,12 +44,13 @@ void plot_correlation(void){
 	FILE *pipe = popen("gnuplot -persist","w");
 	fprintf(pipe, "reset\n");
 	fprintf(pipe, "set border linewidth 1.5\n");
-	fprintf(pipe, "set style line 1 lc rgb '#228f26' lt 1 lw 2 pt 7 ps 1.5 # --- green\n");
+	fprintf(pipe, "set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5 # --- indigo\n");
 	fprintf(pipe, "set grid\n");
 	fprintf(pipe, "set title \"Metropolis\"\n");
 	fprintf(pipe, "set xlabel \"{/Symbol D}t\"\n");
 	fprintf(pipe, "set ylabel \"c[{/Symbol D}t]\"\n");
 	fprintf(pipe, "unset key\n");
+	fprintf(pipe, "set xrange[0:32]\n");
 	fprintf(pipe, "set term postscript enhanced color landscape lw 1 \"Verdana,10\"\n");
 	fprintf(pipe, "set output 'correlation.eps'\n");
 	fprintf(pipe, "plot 'correlation.dat' with linespoints ls 1\n");
@@ -61,7 +62,7 @@ void plot_autocorrelation(void){
 	FILE *pipe = popen("gnuplot -persist","w");
 	fprintf(pipe, "reset\n");
 	fprintf(pipe, "set border linewidth 1.5\n");
-	fprintf(pipe, "set style line 1 lc rgb '#ffbb00' lt 1 lw 2 pt 7 ps 1.5 # --- orange\n");
+	fprintf(pipe, "set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5 # --- indigo\n");
 	fprintf(pipe, "set grid\n");
 	fprintf(pipe, "set title \"Metropolis\"\n");
 	fprintf(pipe, "set xlabel \"k\"\n");
@@ -99,7 +100,7 @@ void fit(){
 	FILE *pipe = popen("gnuplot -persist","w");
 	fprintf(pipe, "reset\n");
 	fprintf(pipe, "set border linewidth 1.5\n");
-	fprintf(pipe, "set style line 1 lc rgb '#0060ad' lt 1 lw 3 pt 7 ps 0.5 # --- red\n");
+	fprintf(pipe, "set style line 1 lc rgb '#0060ad' lt 1 lw 3 pt 7 ps 0.5 # --- indigo\n");
 	fprintf(pipe, "set grid\n");
 	fprintf(pipe, "set title \"Metropolis\"\n");
 	fprintf(pipe, "set tics out nomirror\n");

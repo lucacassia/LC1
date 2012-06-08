@@ -75,7 +75,7 @@ Il tempo di decorrelazione $\tau_d$ è dell'ordine delle unità ($\sim3$) e quin
 
 \subsection{Funzioni di Correlazione}
 
-Si calcola numericamente l'integrale $\int Dx \ x_lx_ke^{-S_E}$ applicano i metodi Monte Carlo e Metropolis in congiunzione. Affinchè le configurazioni utilizzate siano statisticamente indipendenti, si raggruppano i sample in $bin$ (\textit{clusterization}) e si utilizza l'insieme delle medie su ogni $bin$ come ensamble di configurazioni per il calcolo MC. In questo modo, se la dimensione dei $bin$ è molto maggiore di $\tau_d$, la media sul $bin$ attenua considerevolmente gli effetti di correlazione e perciò il nuovo ensamble può essere considerato statisticamente libero.
+Si calcola numericamente l'integrale $\int Dx \ x_lx_ke^{-S_E}$ applicando i metodi Monte Carlo e Metropolis in congiunzione. Affinchè le configurazioni utilizzate siano statisticamente indipendenti, si raggruppano i sample in $bin$ (\textit{clusterization}) e si utilizza l'insieme delle medie su ogni $bin$ come ensamble di configurazioni per il calcolo MC. In questo modo, se la dimensione dei $bin$ è molto maggiore di $\tau_d$, la media sul $bin$ attenua considerevolmente gli effetti di correlazione e perciò il nuovo ensamble può essere considerato statisticamente libero.
 
 La media di un generico osservabile $O$ calcolata in questo modo è analiticamente uguale a quella calcolata per mezzo di ogni sample di ogni $bin$, tuttavia, per calcolare la varianza, bisogna ricorrere alla tecnica del \textit{cluster jackknife} descritta di seguito.
 
@@ -86,7 +86,7 @@ La media di un generico osservabile $O$ calcolata in questo modo è analiticamen
 \label{fig:correlation}
 \end{figure}
 
-Si definisce $o_i$ la stima semplice (calcolata su una singola estrazione) dell'osservabile $O$ allo step $i$. La tecnica \textit{cluster jackknife} consiste nel ricavare le grandezze derivate $o^i$ definite come $$o^i=\langle o\rangle_{bin}+\tfrac{1}{N_{bin}-1}(\langle o\rangle_{bin}-o_i)$$ dove $N_{bin}$ indica il numero totale di $bin$.
+Si definisce $o_i$ la stima semplice (calcolata su una singola estrazione) dell'osservabile $O$ allo step $i$. La tecnica \textit{cluster jackknife} consiste nel ricavare le grandezze derivate $o^i$ definite come $$o^i=\langle o\rangle+\frac{\langle o\rangle-o_i}{N_{bin}-1}$$ dove $N_{bin}$ indica il numero totale di $bin$.
 
 
 

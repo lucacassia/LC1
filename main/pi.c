@@ -5,19 +5,23 @@
 #include<stdlib.h>
 #include"libutil.h"
 
+#define PI 3.141592653589793238462643383279502884197169399375105820974944592308
+
 #define SIGMA 1000
 #define MU 310
 
-double pi_greco(int n)
-{
-    double pi, *r = (double*)malloc(2*n*sizeof(double));
-    int i;
-    ranlxd(r,2*n);
-    for(pi = i = 0; i < n; i++)
-        if(hypot(r[i],r[n+i]) < 1)
-            pi += 1;
-    free(r);
-    return 4.0*pi/n;
+double r[64];
+
+double pi_greco(double n){
+    double i, pi;
+    unsigned int j;
+    for(pi = i = 0; i < n; i++){
+        ranlxd(r,64);
+        for(j = 0; j < 32; j++)
+            if(hypot(r[j],r[32+j]) < 1)
+                pi += 1;
+    }
+    return 4.0*pi/floor(n)/32.0;
 }
 
 //Log-normal
@@ -26,7 +30,7 @@ double pdf(double x, double y){
 }
 
 double metropolis(double x){
-    double r[32], y;
+    double y;
     ranlxd(r,64);
     unsigned int i, count;
     for(count = i = 0; i < 32 && count < 5; i++){
@@ -38,9 +42,10 @@ double metropolis(double x){
     }
     return x;
 }
-
+#define MHMC
+#ifdef MHMC
 int main(int argc,char* argv[]){
-    unsigned int i, sweeps = 10000;
+    unsigned int i, sweeps = 1000;
     double x = MU;
     rlxd_init(2,time(NULL));
     FILE *f = fopen("pi.dat","a");
@@ -49,8 +54,20 @@ int main(int argc,char* argv[]){
     for(i = 0; i < sweeps; i++){
         loading(i,sweeps);
         x = metropolis(x);
-        fprintf(f,"%d\t%14.10e\n",(int)floor(x),fabs(4*atan(1)-pi_greco((int)floor(x))));
+        fprintf(f,"%14.10e\t%14.10e\n",x,fabs(4*atan(1)-pi_greco(x)));
     }
     fclose(f);
     return 0;
 }
+#else
+int main(){
+    unsigned int i;
+    FILE *f = fopen("pi.dat","a");
+    for(i = 0; i < 1000; i++){
+        loading(i,1000);
+        fprintf(f,"%14.10e\t%14.10e\n",pow(10,i*6/1000.0),fabs(PI-pi_greco(pow(10,i*6/1000.0))));
+    }
+    fclose(f);
+    return 0;
+}
+#endif
