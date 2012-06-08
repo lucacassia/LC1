@@ -129,18 +129,13 @@ int main(int argc,char* argv[]){
 #ifdef PLOT
     FILE* f;
     /*plot ΔE*/
-    f = fopen("dE.dat","a");
+    f = fopen("histogram.dat","a");
     fprintf(f,"%lf\n",dE);
     fclose(f);
     binning();
-
-    /*plot W*/
-    f = fopen("W.dat","a");
-    fprintf(f,"%lf\n",W);
-    fclose(f);
 #endif
 #ifdef VAR
-    FILE* g = fopen("var_dE.dat","a");
+    FILE* g = fopen("variance.dat","a");
     fprintf(g,"%d\t%e\n",bin*width,var_dE);
     fclose(g);
     printf("\n\n ΔE  = %lf\n\n σ = %e\n\n W  = %lf\n\n σ = %e\n\n",dE,sqrt(var_dE),W,sqrt(var_W));
