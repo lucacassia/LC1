@@ -1,6 +1,6 @@
 \chapter{\huge Algoritmo Metropolis}
 
-\textit{Il Metropolis è l'algoritmo più influenziale fra quelli appartenenti alla classe dei metodi Monte Carlo. Supportato da una profonda teoria, questo algoritmo costituisce uno strumento fondamentale per la scienza della computazione.}
+\textit{Il Metropolis è l'algoritmo più influenziale fra quelli appartenenti alla classe dei metodi Monte Carlo. Supportato da un'ampia teoria sulle catene di Markov, questo algoritmo costituisce uno strumento fondamentale per la scienza della computazione.}
 
 \textit{In questa sezione si propone di sviluppare un algoritmo Metropolis per simulare un oscillatore armonico quantistico e confrontare i risultati numerici con la teoria.}
 \\
@@ -62,7 +62,7 @@ Tuttavia, per calcolare $\Delta S = S'-S$ si può tenere presente il fatto che a
 Si studia ora la correlazione tra configurazioni generate a step consecutivi dell'algoritmo per ottenere una stima del tempo di decorrelazione $\tau_d$ del sistema. Tale dipendenza fra elementi della catena viene anche denominata \textit{autocorrelazione}.
 
 La formula per il correlatore di due stime dell'osservabile $O$ calcolate da stati estratti a istanti di tempo distanti $k$ è
-$$R(k)=\frac{\langle O_iO_{i+k}\rangle-\langle O_i\rangle^2}{\langle O_i^2\rangle-\langle O_i\rangle^2}=\frac{\frac{\sum\limits_{i=0}^{n-k}O_iO_{i+k}}{n-k}-\langle O_i\rangle^2}{\langle O_i^2\rangle-\langle O_i\rangle^2}$$
+$$R(k)=\frac{\langle O_iO_{i+k}\rangle-\langle O_i\rangle^2}{\langle O_i^2\rangle-\langle O_i\rangle^2}=\frac{\frac{1}{n-k}\sum\limits_{i=0}^{n-k}O_iO_{i+k}-\langle O_i\rangle^2}{\langle O_i^2\rangle-\langle O_i\rangle^2}$$
 
 Il grafico dell'autocorrelazione $R(k)$ per l'osservabile $O(|l-k|)=\langle x_lx_k\rangle$ evidenzia la perdita esponenziale di correlazione nel segnale.
 \begin{figure}[H]
@@ -75,9 +75,9 @@ Il tempo di decorrelazione $\tau_d$ è dell'ordine delle unità ($\sim3$) e quin
 
 \subsection{Funzioni di Correlazione}
 
-Si calcola numericamente l'integrale $\int Dx \ x_lx_ke^{-S_E}$ applicando i metodi Monte Carlo e Metropolis in congiunzione. Affinchè le configurazioni utilizzate siano statisticamente indipendenti, si raggruppano i sample in $bin$ (\textit{clusterization}) e si utilizza l'insieme delle medie su ogni $bin$ come ensamble di configurazioni per il calcolo MC. In questo modo, se la dimensione dei $bin$ è molto maggiore di $\tau_d$, la media sul $bin$ attenua considerevolmente gli effetti di correlazione e perciò il nuovo ensamble può essere considerato statisticamente libero.
+Si calcola numericamente l'integrale $\int Dx \ x_lx_ke^{-S_E}$ applicando i metodi Monte Carlo e Metropolis in congiunzione. Affinchè le configurazioni utilizzate siano statisticamente indipendenti, si raggruppano i sample in $bin$ e si utilizza l'insieme delle medie su ogni $bin$ come ensamble di configurazioni per il calcolo MC. In questo modo, se la dimensione dei $bin$ è molto maggiore di $\tau_d$, la media sul $bin$ attenua considerevolmente gli effetti di correlazione e perciò il nuovo ensamble può essere considerato statisticamente libero.
 
-La media di un generico osservabile $O$ calcolata in questo modo è analiticamente uguale a quella calcolata per mezzo di ogni sample di ogni $bin$, tuttavia, per calcolare la varianza, bisogna ricorrere alla tecnica del \textit{cluster jackknife} descritta di seguito.
+La media di un generico osservabile $O$ calcolata in questo modo è analiticamente uguale a quella calcolata per mezzo di ogni sample di ogni $bin$. La varianza sui valori medi, tuttavia, differisce dalla varianza semplice di un termine proporzionale alla covarianza fra le variabili.
 
 \begin{figure}[H]
 \centering
@@ -86,24 +86,32 @@ La media di un generico osservabile $O$ calcolata in questo modo è analiticamen
 \label{fig:correlation}
 \end{figure}
 
-Si definisce $o_i$ la stima semplice (calcolata su una singola estrazione) dell'osservabile $O$ allo step $i$. La tecnica \textit{cluster jackknife} consiste nel ricavare le grandezze derivate $o^i$ definite come $$o^i=\langle o\rangle+\frac{\langle o\rangle-o_i}{N_{bin}-1}$$ dove $N_{bin}$ indica il numero totale di $bin$.
-
-
-
 \subsection{Calcolo di Grandezze Quanto-Meccaniche Secondarie}
 
+Come anticipato nell'introduzione sull'oscillatore armonico, è ora possibile ricavare stime di grandezze quanto-meccaniche secondarie direttamente dai valori delle funzioni di correlazione del sistema $\langle x_lx_k\rangle$. Le varianze sui valori medi sono calcolate attraverso la tecnica \textit{cluster jackknife}.
+\\
+
+Sia $o_i$ la stima semplice dell'osservabile $O$ allo step $i$. La tecnica \textit{cluster jackknife} consiste nel ricavare le grandezze derivate $o^i$ (\textit{clusterization}), definite come $$o^i=\langle o\rangle+\frac{\langle o\rangle-o_i}{N_{bin}-1}$$ dove $N_{bin}$ indica il numero totale di $bin$. Nel caso in esame la grandezza $O$ è il correlatore calcolato nella sezione precedente.
+
+Data una funzione $f=f(o)$, si definiscono $f^i=f(a^i)$ e $\langle f\rangle=f(\langle o\rangle)$. Si ottiene allora $$\sigma^2_f=\frac{N_{bin}-1}{N_{bin}}\sum\limits_i(f^i-\langle f\rangle)^2$$
+I valori utilizzati per i parametri del sistema sono $N=32$, $\hbar=1$, $a=1$, $\omega=1$, $m=1$ e i valori ottenuti sono
+\begin{eqnarray*}
+\Delta E&=&0.9589359930\pm0.0057513054\\
+W&=&0.6679253933\pm0.0071617466
+\end{eqnarray*}
+
+In figura \ref{fig:histogram} si nota come l'errore statistico coincida con una buona approssimazione con quello stimato dal \textit{cluster jackknife}.
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{histogram}
-\caption{Distribuzione di $\Delta E$}
+\includegraphics[width=0.7\textwidth]{histogram}
+\caption{Distribuzione di $\Delta E$ a fissato numero di sweeps}
 \label{fig:histogram}
 \end{figure}
-
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{variance}
-\caption{Varianza di $\Delta E$}
+\includegraphics[width=0.7\textwidth]{variance}
+\caption{Varianza di $\Delta E$ in funzione del numero di sweeps}
 \label{fig:variance}
 \end{figure}
-
 

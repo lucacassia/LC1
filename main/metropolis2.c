@@ -4,7 +4,6 @@
 #include<time.h>
 #include"libutil.h"
 #include"random.h"
-#include"plot.h"
 
 #define N 32
 //#define PLOT
@@ -133,7 +132,7 @@ int main(int argc,char* argv[]){
     f = fopen("dE.dat","a");
     fprintf(f,"%lf\n",dE);
     fclose(f);
-    fit();
+    binning();
 
     /*plot W*/
     f = fopen("W.dat","a");
@@ -144,13 +143,9 @@ int main(int argc,char* argv[]){
     FILE* g = fopen("var_dE.dat","a");
     fprintf(g,"%d\t%e\n",bin*width,var_dE);
     fclose(g);
-    plot_var();
     printf("\n\n ΔE  = %lf\n\n σ = %e\n\n W  = %lf\n\n σ = %e\n\n",dE,sqrt(var_dE),W,sqrt(var_W));
 #endif
 
 #endif
-
-    fit();
-
     return 0;
 }

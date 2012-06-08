@@ -7,7 +7,7 @@
 
 #define PI 3.141592653589793238462643383279502884197169399375105820974944592308
 
-#define SIGMA 1000
+#define SIGMA 10
 #define MU 310
 
 double r[64];
@@ -34,7 +34,7 @@ double metropolis(double x){
     ranlxd(r,64);
     unsigned int i, count;
     for(count = i = 0; i < 32 && count < 5; i++){
-        y = fabs( x + 10000 * (2 * r[i] - 1) );
+        y = fabs( x + 1000 * (2 * r[i] - 1) );
         if(r[32+i] < pdf(x,y)){
             x = y;
             count++;
@@ -42,8 +42,7 @@ double metropolis(double x){
     }
     return x;
 }
-#define MHMC
-#ifdef MHMC
+
 int main(int argc,char* argv[]){
     unsigned int i, sweeps = 1000;
     double x = MU;
@@ -59,15 +58,3 @@ int main(int argc,char* argv[]){
     fclose(f);
     return 0;
 }
-#else
-int main(){
-    unsigned int i;
-    FILE *f = fopen("pi.dat","a");
-    for(i = 0; i < 1000; i++){
-        loading(i,1000);
-        fprintf(f,"%14.10e\t%14.10e\n",pow(10,i*6/1000.0),fabs(PI-pi_greco(pow(10,i*6/1000.0))));
-    }
-    fclose(f);
-    return 0;
-}
-#endif

@@ -4,7 +4,6 @@
 #include<time.h>
 #include"libutil.h"
 #include"random.h"
-#include"plot.h"
 
 #define N 32
 
@@ -65,13 +64,14 @@ double autoCorrelation(int i,int k,int n,double* data){
 int main(int argc,char* argv[]){
     /*init ranlux*/
     rlxd_init(2,time(NULL));
-    /*init stuff*/
+    /*init parameters*/
     int cycles = 1e6; if(argc == 2) cycles = atoi(argv[1]);
     int width = 100; if(argc == 3) width = atoi(argv[2]);
     int bin = cycles/width;
     int i,j,k;
-    /*init mem*/
+    /*alloc data array for autocorrelation purposes*/
     double* data = malloc(N*width*bin*sizeof(double));
+    /*alloc data array for clusterization*/
     double* dtcl = malloc(N*bin*sizeof(double));
     /*init variables*/
     double x[N],c[N],var[N],tmp;
@@ -86,7 +86,6 @@ int main(int argc,char* argv[]){
     for(i = 0; i < 1e3; i++)
         fprintf(f,"%d\t%lf\n",(i+1),S += metropolis(x));
     fclose(f);
-    plot_action();
 
     /*metropolis loop*/
     for(i = 0; i < bin; i++)
@@ -106,7 +105,6 @@ int main(int argc,char* argv[]){
         fprintf(f,"%d\t%lf\n",i,autoCorrelation(1,i,bin*width,data));
     fclose(f);
     free(data);
-    plot_autocorrelation();
 
     /*correlation*/
     f = fopen("correlation.dat","w");
@@ -120,7 +118,6 @@ int main(int argc,char* argv[]){
         fprintf(f,"%d\t%lf\t%lf\n",k,fabs(c[k]),var[k]);
     }
     fclose(f);
-    plot_correlation();
 
     /*deltaE & W*/
     double dE = 0, W = 0;
@@ -165,13 +162,13 @@ int main(int argc,char* argv[]){
     var_W = (var_W*(bin-1))/bin;
 
 #ifdef HISTOGRAM
-    /*plot deltaE*/
-    f = fopen("dE.dat","a");
+    /*plot histogram of dE*/
+    f = fopen("histogram.dat","a");
     fprintf(f,"%lf\n",dE);
     fclose(f);
-    fit();
+    binning();
 #endif
-    printf("\n\n dE  = %lf\n\n sigma = %e\n\n W  = %lf\n\n sigma = %e\n\n",dE,sqrt(var_dE),W,sqrt(var_W));
+    printf("\n\n dE  = %14.10lf\n\n sigma = %14.10lf\n\n W  = %14.10lf\n\n sigma = %14.10lf\n\n",dE,sqrt(var_dE),W,sqrt(var_W));
 
     return 0;
 }
