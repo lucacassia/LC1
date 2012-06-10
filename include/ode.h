@@ -3,8 +3,6 @@
 
 #include <math.h>
 
-#define dt (1e-3)
-
 typedef enum { ODE_CHAOTIC, ODE_VANDERPOL, ODE_DUFFING, ODE_LORENZ, ODE_ROSSLER, ODE_RABINOVICH_FABRIKANT, ODE_CHUA } ODE_TYPE;
 
 double dummy(double x,double y, double z,double t) {return 0;}
@@ -69,7 +67,7 @@ void plist_erase(plist **head){
     }
 }
 
-void plist_evolve_ode(plist **head_ptr, plist **tail_ptr, ODE_TYPE type){
+void plist_evolve_ode(plist **head_ptr, plist **tail_ptr, ODE_TYPE type, double dt){
     double x = 0, y = 0, z = 0, k1, k2, k3, k4;
     double (*function_x)(double,double,double,double) = NULL;
     double (*function_y)(double,double,double,double) = NULL;

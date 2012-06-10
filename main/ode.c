@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "ode.h"
 
-int mouseDown = 0;
+int mouse_down = 0;
 int active = 1;
 
 int width = 640;
@@ -10,9 +10,10 @@ int height = 480;
 
 float xrot = 0.0f;
 float yrot = 0.0f;
-
-float xdiff = 0.0f;
-float ydiff = 0.0f;
+float xangle = 0.0f;
+float yangle = 0.0f;
+float mouse_x = 0.0f;
+float mouse_y = 0.0f;
 
 plist *list = NULL;
 
@@ -20,8 +21,6 @@ float scale = 1.5f;
 float shift = 0.05f;
 float scaling = 1.0f;
 plist translation = {.x = 0.0f, .y = 0.0f, .z = 0.0f};
-plist haxis = {.x = 1.0f, .y = 0.0f, .z = 0.0f};
-plist vaxis = {.x = 0.0f, .y = 1.0f, .z = 0.0f};
 
 void savePPM(unsigned char *frame)
 {
@@ -48,25 +47,10 @@ void drawLine(plist *trail, double *color)
 {
     glBegin(GL_LINE_STRIP);
     while(trail != NULL){
-        double factor = 1;
-        if(trail->z <= 0)
-            factor = 1;
-        if(trail->z > 0 && trail->z < 50)
-            factor = 1-trail->z/50;
-        glColor3d(color[0]*factor,color[1]*factor,color[2]*factor);
+        glColor3d(color[0],color[1],color[2]);
         glVertex3d(trail->x,trail->y,trail->z);
         trail = trail->next;
     }
-    glEnd();
-}
-
-void drawCircle(plist head, double r, double *color)
-{
-    glColor3d(color[0],color[1],color[2]);
-    glBegin(GL_POLYGON);
-    int i;
-    for(i = 0; i < 360; i++)
-        glVertex3d(head.x+r*cos(i*3.14159265/180), head.y+r*sin(i*3.14159265/180), head.z);
     glEnd();
 }
 
@@ -88,18 +72,17 @@ void display()
     glLoadIdentity();
 
     gluLookAt(
-    0.0f, 0.0f, 3.0f,
+    0.0f, 0.0f, -3.0f,
     0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f);
 
     glScalef(scaling,scaling,scaling);
     glTranslatef(translation.x,translation.y,translation.z);
-    glRotatef(xrot, haxis.x, haxis.y, haxis.z);
-    glRotatef(yrot, vaxis.x, vaxis.y, vaxis.z);
+    glRotatef(yangle + yrot, 1.0f, 0.0f, 0.0f);
+    glRotatef(xangle + xrot, 0.0f, 1.0f, 0.0f);
 
     double color[3] = {0, 0.134, 1};
     drawLine(list, color);
-    drawCircle(*list, 0.02, color);
 
     glFlush();
     glutSwapBuffers();
@@ -124,7 +107,7 @@ void resize(int w, int h)
 void idle()
 {
     if(active)
-        plist_evolve_ode(&list, NULL, ODE_CHUA);
+        plist_evolve_ode(&list, NULL, ODE_CHUA, 1e-3);
 
     glutPostRedisplay();
 }
@@ -198,26 +181,26 @@ plist getPosition(int x, int y)
 
 void mouse(int button, int state, int x, int y)
 {
-    if ((mouseDown = (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)))
-    {
-        xdiff = x - yrot;
-        ydiff = -y + xrot;
+    if (!mouse_down && button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        mouse_down = 1;
+        mouse_x = x;
+        mouse_y = y;
+
     }
-    if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
-    {
-        plist tmp = getPosition(x,height-y);
-        plist_erase(&list);
-        plist_add_front(&list, tmp.x, tmp.y, tmp.z, tmp.t);
+    else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+        mouse_down = 0;
+        xangle += xrot;
+        yangle += yrot;
+        xrot = 0.0;
+        yrot = 0.0;
     }
 }
 
-void mouseMotion(int x, int y)
+void motion(int x, int y)
 {
-    if (mouseDown)
-    {
-        yrot = x - xdiff;
-        xrot = y + ydiff;
-
+    if (mouse_down) {
+        xrot = (x-mouse_x)*45.0/500;
+        yrot = (y-mouse_y)*45.0/500;
         glutPostRedisplay();
     }
 }
@@ -236,7 +219,7 @@ int main(int argc, char *argv[])
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(specialKeyboard);
     glutMouseFunc(mouse);
-    glutMotionFunc(mouseMotion);
+    glutMotionFunc(motion);
     glutReshapeFunc(resize);
     glutIdleFunc(idle);
 
