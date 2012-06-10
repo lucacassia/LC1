@@ -15,11 +15,8 @@ double harmonic(double x,double y){ return mass*omega*omega*((x)*(x)+(y)*(y))/2.
 
 double mix(double x,double y){
     if(hypot(x,y)<0.25)
-        return -0.05;
-    if(hypot(x,y)<0.5)
-	return 0.05;
-    else
-        return -mass*omega*omega*((x)*(x)+(y)*(y))/2.0;
+        return 0.05;
+    return -mass*omega*omega*((x)*(x)+(y)*(y))/2.0;
 }
 
 double well(double x,double y){
@@ -28,9 +25,7 @@ double well(double x,double y){
     return 0;
 }
 
-double coscos(double x,double y){return -cos(x*4*atan(1))-cos(y*4*atan(1));}
-
-double (*potential)(double,double) = coscos;
+double (*potential)(double,double) = mix;
 
 typedef struct{
     int width,height,size;
