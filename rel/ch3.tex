@@ -64,3 +64,19 @@ Esempi di sistemi dinamici che presentano comportamenti non lineari sono i siste
  \caption{Soluzioni numeriche di sistemi dinamici non lineari}\label{fig:systems}
 \end{figure}
 
+La precisione del metodo RK4 decresce considerevolmente con all'aumentare del numero di step della simulazione. L'errore teorico stimato infatti si accumula ad ogni step incrementando la discrepanza con la soluzione analitica. Ciò risulta evidente dal risultato della simulazione rappresentata in figura \ref{fig:rk_error}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{rk_error}
+\caption{Due simulazioni del sistema di Chua con uguali condizioni iniziali e differenti $h$. La linea rossa rappresenta la soluzione numerica calcolata con $h$ doppio rispetto a quello della soluzione in blu}
+\label{fig:rk_error}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{ode}
+\caption{Discrepanza fra le soluzioni in funzione del tempo di simulazione}
+\label{fig:ode}
+\end{figure}
+

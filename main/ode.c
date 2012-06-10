@@ -2,29 +2,32 @@
 #include <stdio.h>
 #include "ode.h"
 
-int mouse_down = 0;
+int mouseDown = 0;
 int active = 1;
+int draw_shadow = 0;
 
 int width = 640;
 int height = 480;
 
 float xrot = 0.0f;
 float yrot = 0.0f;
-float xangle = 0.0f;
-float yangle = 0.0f;
-float mouse_x = 0.0f;
-float mouse_y = 0.0f;
+
+float xdiff = 0.0f;
+float ydiff = 0.0f;
 
 plist *list = NULL;
+plist *shadow = NULL;
 
 float scale = 1.5f;
 float shift = 0.05f;
 float scaling = 1.0f;
 plist translation = {.x = 0.0f, .y = 0.0f, .z = 0.0f};
+plist haxis = {.x = 1.0f, .y = 0.0f, .z = 0.0f};
+plist vaxis = {.x = 0.0f, .y = 1.0f, .z = 0.0f};
 
 void savePPM(unsigned char *frame)
 {
-    FILE *f = fopen("image.ppm", "wb");
+    FILE *f = fopen("ode.ppm", "wb");
     fprintf(f, "P6\n%d %d\n255\n", width, height);
     int i,j;
     for(i = height-1; i >= 0; i--)
@@ -33,12 +36,13 @@ void savePPM(unsigned char *frame)
     fclose(f);
 }
 
-void saveData(plist *trail)
+void saveData(plist *trail,plist *shadow)
 {
-    FILE *f = fopen("image.dat", "w");
-    while(trail != NULL){
-        fprintf(f, "%lf\t%lf\t%lf\n", trail->x, trail->y, trail->z);
-        trail = trail->next;
+    FILE *f = fopen("ode.dat", "w");
+    while(trail != NULL && trail->next != NULL && shadow != NULL){
+        fprintf(f, "%14.10e\t%14.10e\t%14.10e\t%14.10e\t%14.10e\t%14.10e\t%14.10e\n", trail->x, trail->y, trail->z, shadow->x, shadow->y, shadow->z, shadow->t);
+        trail = trail->next->next;
+        shadow = shadow->next;
     }
     fclose(f);
 }
@@ -56,7 +60,8 @@ void drawLine(plist *trail, double *color)
 
 int init()
 {
-    plist_add_front(&list,-1,0,0.5,0);
+    plist_add_front(&list,-1.0f,0.0f,0.5f,0.0f);
+    plist_add_front(&shadow,-1.0f,0.0f,0.5f,0.0f);
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -72,18 +77,23 @@ void display()
     glLoadIdentity();
 
     gluLookAt(
-    0.0f, 0.0f, -3.0f,
+    0.0f, 0.0f, 3.0f,
     0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f);
 
     glScalef(scaling,scaling,scaling);
     glTranslatef(translation.x,translation.y,translation.z);
-    glRotatef(yangle + yrot, 1.0f, 0.0f, 0.0f);
-    glRotatef(xangle + xrot, 0.0f, 1.0f, 0.0f);
+    glRotatef(xrot, haxis.x, haxis.y, haxis.z);
+    glRotatef(yrot, vaxis.x, vaxis.y, vaxis.z);
 
-    double color[3] = {0, 0.134, 1};
+    double color[3] = {0.0f, 0.134f, 1.0f};
     drawLine(list, color);
-
+    if(draw_shadow){
+        color[0] = 1.0f;
+        color[1] = 0.134f;
+        color[2] = 0.0f;
+        drawLine(shadow, color);
+    }
     glFlush();
     glutSwapBuffers();
 }
@@ -106,9 +116,11 @@ void resize(int w, int h)
 
 void idle()
 {
-    if(active)
+    if(active){
         plist_evolve_ode(&list, NULL, ODE_CHUA, 1e-3);
-
+        plist_evolve_ode(&list, NULL, ODE_CHUA, 1e-3);
+        plist_evolve_ode(&shadow, NULL, ODE_CHUA, 2e-3);
+    }
     glutPostRedisplay();
 }
 
@@ -127,8 +139,12 @@ void keyboard(unsigned char key, int x, int y)
         case 'p': case 'P': case ' ':
             active = !active;
             break;
+        case 's': case 'S':
+            draw_shadow = !draw_shadow;
+            break;
         case 'q': case 'Q': case 27:
             plist_erase(&list);
+            plist_erase(&shadow);
             exit(0);
             break;
     }
@@ -146,7 +162,7 @@ void specialKeyboard(int key, int x, int y)
             free(frame);
             break;
         case GLUT_KEY_F2:
-            saveData(list);
+            saveData(list,shadow);
             break;
         case GLUT_KEY_UP:
             translation.y -= shift;
@@ -181,26 +197,28 @@ plist getPosition(int x, int y)
 
 void mouse(int button, int state, int x, int y)
 {
-    if (!mouse_down && button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-        mouse_down = 1;
-        mouse_x = x;
-        mouse_y = y;
-
+    if ((mouseDown = (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)))
+    {
+        xdiff = x - yrot;
+        ydiff = -y + xrot;
     }
-    else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-        mouse_down = 0;
-        xangle += xrot;
-        yangle += yrot;
-        xrot = 0.0;
-        yrot = 0.0;
+    if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+    {
+        plist tmp = getPosition(x,height-y);
+        plist_erase(&list);
+        plist_erase(&shadow);
+        plist_add_front(&list, tmp.x, tmp.y, tmp.z, tmp.t);
+        plist_add_front(&shadow, tmp.x, tmp.y, tmp.z, tmp.t);
     }
 }
 
-void motion(int x, int y)
+void mouseMotion(int x, int y)
 {
-    if (mouse_down) {
-        xrot = (x-mouse_x)*45.0/500;
-        yrot = (y-mouse_y)*45.0/500;
+    if (mouseDown)
+    {
+        yrot = x - xdiff;
+        xrot = y + ydiff;
+
         glutPostRedisplay();
     }
 }
@@ -219,7 +237,7 @@ int main(int argc, char *argv[])
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(specialKeyboard);
     glutMouseFunc(mouse);
-    glutMotionFunc(motion);
+    glutMotionFunc(mouseMotion);
     glutReshapeFunc(resize);
     glutIdleFunc(idle);
 

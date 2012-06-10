@@ -43,16 +43,13 @@ $$\int_a^b f(x)\,dx \approx \frac{b-a}{2} \sum_{i=1}^n w_i f\left(\frac{b-a}{2}x
 I nodi ed i pesi per il polinomio di Legendre di quinto grado sono riportati in tabella:\\
 \begin{center}
 \scalebox{1.5}{
-\begin{tabular}{|c|c|}
+\begin{tabular}{c c}
 \hline
 $x_i$ & $w_i$ \\
 \hline\hline
 $0$ & $\frac{128}{255}$ \\
-\hline
 $\pm\tfrac13\sqrt{5-2\sqrt{10/7}}$ & $\tfrac{322+13\sqrt{70}}{900}$ \\
-\hline
 $\pm\tfrac13\sqrt{5+2\sqrt{10/7}}$ & $\tfrac{322-13\sqrt{70}}{900}$ \\
-\hline
 \end{tabular}
 }
 \end{center}
@@ -101,11 +98,11 @@ Come previsto, il metodo Monte Carlo risulta il più impreciso, con un errore di
 
 La distribuzione dell'errore MC in funzione del numero di samples, calcolata sull'integrale
 $$\int_\Omega d\mu = \tfrac{\pi}{4}$$
-dove $\Omega$ indica il primo quarto di circonferenza goniometrica, verifica la relazione $\sigma_{MC}=1/\sqrt N$ (figura \ref{fig:pi}).
+dove $\Omega$ indica il primo quarto di circonferenza goniometrica, verifica la relazione $\sigma_{MC}\simeq 1/\sqrt N$ (figura \ref{fig:pi}).
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{pi}
-\caption{Errore MC in funzione del numero di samples}
+\caption{Distribuzione dell'errore MC in funzione del numero di samples. La linea continua rappresenta la funzione $1/\sqrt{N}$.}
 \label{fig:pi}
 \end{figure}
 
