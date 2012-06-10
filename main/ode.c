@@ -1,4 +1,4 @@
-#include <GL/freeglut.h>
+#include <GL/glut.h>
 #include <stdio.h>
 #include "ode.h"
 
@@ -144,9 +144,6 @@ void keyboard(unsigned char key, int x, int y)
         case 'p': case 'P': case ' ':
             active = !active;
             break;
-        case 'f': case 'F':
-            glutFullScreenToggle();
-            break;
         case 'q': case 'Q': case 27:
             plist_erase(&list);
             exit(0);
@@ -167,9 +164,6 @@ void specialKeyboard(int key, int x, int y)
             break;
         case GLUT_KEY_F2:
             saveData(list);
-            break;
-        case GLUT_KEY_F11:
-            glutFullScreenToggle();
             break;
         case GLUT_KEY_UP:
             translation.y -= shift;

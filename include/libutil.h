@@ -18,7 +18,7 @@ void binning(){
     for(i = 0; i < 125; i++)
         freq[i] = 0;
     FILE* f = fopen("histogram.dat","r");
-    while(fscanf(f, "%lf\n", &tmp)==1){
+    while(fscanf(f, "%lf\n", &tmp) == 1){
         count++;
         for(i = 0; i < 125; i++)
             if(tmp > min+i*width && tmp <= min+(i+1)*width)

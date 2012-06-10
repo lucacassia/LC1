@@ -33,7 +33,7 @@ set log xy
 set xlabel "sweep number"
 set ylabel "{/Symbol s^2}"
 set output 'variance.eps'
-plot 'variance.dat' pt 6 ps 1.5 lc rgb '#000022' title 'variance'
+plot 'variance.dat' pt 6 ps 1.5 lc rgb '#0060ad' title 'variance'
 unset logscale
 
 #HISTOGRAM
