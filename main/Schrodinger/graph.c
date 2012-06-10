@@ -41,7 +41,7 @@ int rotate = 0;
 int polygonoffset = 1;
 int active = 1;
 
-int modeView = 0;
+C_MODE mode = C_MODULE;
 int width = 640;
 int height = 480;
 int grid = 100;
@@ -74,17 +74,12 @@ void setupTexture()
     for(i = 0; i < N; i++) {
         for(j = 0; j < N; j++) {
             double z = 0;
-            switch(modeView){
-                case 0:
-                    z = _complex_mod(complexSurface->psi[i*N+j]);
-                    break;
-                case 1:
-                    z = (complexSurface->psi[i*N+j]).re;
-                    break;
-                case 2:
-                    z = (complexSurface->psi[i*N+j]).im;
-                    break;
-            }
+            if(mode == C_MODULE)
+                z = _complex_mod(complexSurface->psi[i*N+j]);
+            if(mode == C_REAL)
+                z = (complexSurface->psi[i*N+j]).re;
+            if(mode == C_IMAGINARY)
+                z = (complexSurface->psi[i*N+j]).im;
             graph[i][j] = roundf(z * amplitude * 127 + 128);
         }
     }
@@ -271,9 +266,8 @@ void display()
     glMatrixMode(GL_TEXTURE);
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef(texture_offset_x, texture_offset_y, 0.0f);
     glScalef(texture_scale, texture_scale, texture_scale);
-    glTranslatef(-texture_offset_x, -texture_offset_y, 0.0f);
+    glTranslatef(texture_offset_x, texture_offset_y, 0.0f);
     glGetFloatv(GL_TEXTURE_MATRIX, texture_transform);
     glUniformMatrix4fv(uniform_texture_transform, 1, GL_FALSE, texture_transform);
     glPopMatrix();
@@ -338,15 +332,15 @@ void special(int key, int x, int y)
             polygonoffset = !polygonoffset;
             break;
         case GLUT_KEY_F5:
-            modeView = 0;
+            mode = C_MODULE;
             setupTexture();
             break;
         case GLUT_KEY_F6:
-            modeView = 1;
+            mode = C_REAL;
             setupTexture();
             break;
         case GLUT_KEY_F7:
-            modeView = 2;
+            mode = C_IMAGINARY;
             setupTexture();
             break;
         case GLUT_KEY_F8:

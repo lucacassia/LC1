@@ -7,6 +7,8 @@ typedef struct{
    double re,im;
 } complex_t;
 
+typedef enum { C_REAL, C_IMAGINARY, C_MODULE } C_MODE;
+
 static const complex_t COMPLEX_ZERO = {.re = 0.0, .im = 0.0};
 static const complex_t COMPLEX_ONE = {.re = 1.0, .im = 0.0};
 static const complex_t COMPLEX_I = {.re = 0.0, .im = 1.0};
