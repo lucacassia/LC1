@@ -437,10 +437,12 @@ void keyboard(unsigned char key, int x, int y)
         case 'g':
             if(grid < N-10)
                 grid += 10;
+            setupTexture();
             break;
         case 'G':
             if(grid > 10)
                 grid -= 10;
+            setupTexture();
             break;
     }
 }

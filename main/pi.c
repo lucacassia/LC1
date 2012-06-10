@@ -24,7 +24,7 @@ double pi_greco(double n){
 }
 
 //Log-normal
-double pdf(double x, double y){
+double deltaProb(double x, double y){
     return x * exp( (log(x*y)-2*MU)*log(x/y)/(2*SIGMA*SIGMA) ) / y;
 }
 
@@ -34,7 +34,7 @@ double metropolis(double x){
     int i, count;
     for(count = i = 0; i < 32 && count < 5; i++){
         y = fabs( x + 1000 * (2 * r[i] - 1) );
-        if(r[32+i] < pdf(x,y)){
+        if(r[32+i] < deltaProb(x,y)){
             x = y;
             count++;
         }
