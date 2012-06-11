@@ -1,8 +1,14 @@
+#ifdef __APPLE__
+#include <GLUT/glew.h>
+#include <GLUT/glut.h>
+#else
+#include <GL/glew.h>
+#include <GL/glut.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <GL/glew.h>
-#include <GL/glut.h>
 #include "shader_utils.h"
 #include "distribution.h"
 

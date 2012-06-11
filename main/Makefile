@@ -44,7 +44,7 @@ INCPATH = ../include
 
 # additional libraries to be included 
  
-LIBS = m glut GL X11 GLU
+LIBS = m glut GL GLU
 
 LIBPATH =
 
@@ -67,6 +67,11 @@ INCDIRS = $(addprefix -I,$(INCPATH))
 OBJECTS = $(addsuffix .o,$(MODULES))
 
 LDFLAGS = $(addprefix -L,$(LIBPATH)) $(addprefix -l,$(LIBS))
+
+# Mac OS alternate link options
+ifeq "$(OSTYPE)" "Darwin"
+	LDFLAGS	= -framework Carbon -framework OpenGL -framework GLUT -lm
+endif
 
 -include $(addsuffix .d,$(PGMS))
 

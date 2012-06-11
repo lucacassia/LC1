@@ -38,9 +38,9 @@ INCPATH = ../../include
 
 # additional libraries to be included 
  
-LIBS = m glut GL X11 GLEW GLU
+LIBS = m glut GL GLEW GLU
 
-LIBPATH =
+LIBPATH = 
 
 
 # scheduling and optimization options (such as -DSSE -DSSE2 -DP4)
@@ -61,6 +61,11 @@ INCDIRS = $(addprefix -I,$(INCPATH))
 OBJECTS = $(addsuffix .o,$(MODULES))
 
 LDFLAGS = $(addprefix -L,$(LIBPATH)) $(addprefix -l,$(LIBS))
+
+# Mac OS alternate link options
+ifeq "$(OSTYPE)" "Darwin"
+	LDFLAGS	= -framework Carbon -framework OpenGL -framework GLUT -lm -lGLEW
+endif
 
 -include $(addsuffix .d,$(PGMS))
 
