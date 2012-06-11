@@ -38,7 +38,7 @@ float yrot = 0.0f;
 float mouse_x = 0.0f;
 float mouse_y = 0.0f;
 
-float amplitude = 1.0f;
+float amplitude = 10.0f;
 
 int mouse_down = 0;
 int interpolate = 1;
@@ -46,8 +46,10 @@ int clamp = 0;
 int rotate = 0;
 int polygonoffset = 1;
 int active = 1;
+int pipe2stdout = 0;
 
 C_MODE mode = C_MODULE;
+
 int width = 640;
 int height = 480;
 int grid = 100;
@@ -233,14 +235,15 @@ void display()
     width = viewport[2];
     height = viewport[3];
 
-#ifdef PIPE
+    if(pipe2stdout){
+        int i,j;
         frame = (unsigned char*)malloc(3*width*height*sizeof(unsigned char));
         glReadPixels(0,0,width,height,GL_RGB,GL_UNSIGNED_BYTE,frame);
-        for(int i = height-1; i >= 0; i--)
-            for(int j = 0; j < width; j++)
+        for(i = height-1; i >= 0; i--)
+            for(j = 0; j < width; j++)
                 fwrite(&frame[(i*width+j)*3], sizeof(unsigned char), 3, stdout);
         free(frame);
-#endif
+    }
 
     glClearColor(1.0, 1.0, 1.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -354,6 +357,9 @@ void special(int key, int x, int y)
             glReadPixels(0,0,width,height,GL_RGB,GL_UNSIGNED_BYTE,frame);
             savePPM(frame);
             free(frame);
+            break;
+        case GLUT_KEY_F9:
+            pipe2stdout = !pipe2stdout;
             break;
         case GLUT_KEY_LEFT:
             texture_offset_x -= 0.03;

@@ -6,7 +6,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef __APPLE__
+#include <GLUT/glew.h>
+#else
 #include <GL/glew.h>
+#endif
 
 /**
  * Store all the file's contents in memory, useful to pass shaders
