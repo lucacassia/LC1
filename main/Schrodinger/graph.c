@@ -162,8 +162,8 @@ int init_resources()
     GLint link_ok = GL_FALSE;
 
     GLuint vs, fs;
-    if ((vs = create_shader("v.glsl", GL_VERTEX_SHADER))   == 0) return 0;
-    if ((fs = create_shader("f.glsl", GL_FRAGMENT_SHADER)) == 0) return 0;
+    if ((vs = create_shader("vertex.glsl", GL_VERTEX_SHADER))   == 0) return 0;
+    if ((fs = create_shader("fragment.glsl", GL_FRAGMENT_SHADER)) == 0) return 0;
 
     program = glCreateProgram();
     glAttachShader(program, vs);
