@@ -3,7 +3,7 @@
 \textit{In analisi numerica i metodi Runge-Kutta sono una famiglia di metodi iterativi impliciti ed espliciti per la risuluzione approssimata di equazioni differenziali ordinarie (ODE). Il più comune di questi metodi è il cosidetto ``RK4'' o anche Runge-Kutta del quarto ordine.}
 \\\\
 Sia dato il problema di Cauchy
-$$ \dot y = f(t, y), \quad y(t_0) = y_0.$$
+$$ \dot y = f(t, y), \quad y(t_0) = y_0$$
 Si assume che il tempo sia discretizzato in istanti $t_n$ equidistanziati di un intervallo $h$.\\
 Il metodo RK4 per questo problema è allora dato dalle seguenti equazioni:
 \begin{eqnarray*}
@@ -22,14 +22,14 @@ Il valore della funzione $y$ all'istante $t_{n+1}$ è uguale quindi al suo valor
 \item $k_1$ è l'incremento basato sulla pendenza di $f$ all'estremo sinistro dell'intervallo, calcolato in $y_n$ (metodo di Eulero);
 \item $k_2$ è l'incremento basato sulla pendenza nel punto medio dell'intervallo, calcolato in $y_n+\frac{1}{2}k_1$;
 \item $k_3$ è ancora l'incremento basato sulla pendenza nel punto medio, calcolato però in $y_n+\frac{1}{2}k_2$;
-\item $k_4$ è l'ncremento basato sulla pendenza all'estremo destro dell'intervallo, calcolato in $y_n+k_3$.
+\item $k_4$ è l'incremento basato sulla pendenza all'estremo destro dell'intervallo, calcolato in $y_n+k_3$.
 \end{itemize}
-Si nota dalla formula per $y_{n+1}$ che peso maggiore viene assegnato all'incremento al centro dell'intervallo. Inoltre, se $f=f(t)$ cioè non dipende da $y$, il metodo RK4 si riduce alla regola di integrazione di Simpson.
+Si nota dalla formula per $y_{n+1}$ che peso maggiore viene assegnato all'incremento al centro dell'intervallo. Inoltre, se $f=f(t)$, cioè non dipende da $y$, il metodo RK4 si riduce alla regola di integrazione di Simpson.
 
 RK4 è un metodo del quarto ordine e quindi l'errore ad ogni step è dell'ordine di $h^5$, mentre l'errore totale accumulato è dell'ordine di $h^4$.
 
 \section{Simulazione di Sistemi Dinamici}
-Per mezzo del metodo RK4 è possibile simulare l'evoluzione di sistemi dinamici, in particolare di quelli non lineari, le cui soluzioni non sono note analiticamente.
+Per mezzo del metodo RK4 è possibile simulare l'evoluzione di sistemi dinamici, in particolare di quelli non lineari o caotici, le cui soluzioni non sono note analiticamente.
 
 Esempi di sistemi dinamici che presentano comportamenti non lineari sono i sistemi di Lorenz, Rossler, Chua e di Rabinovich-Fabrikant.
 
@@ -64,12 +64,12 @@ Esempi di sistemi dinamici che presentano comportamenti non lineari sono i siste
  \caption{Soluzioni numeriche di sistemi dinamici non lineari}\label{fig:systems}
 \end{figure}
 
-La precisione del metodo RK4 decresce considerevolmente con all'aumentare del numero di step della simulazione. L'errore teorico stimato infatti si accumula ad ogni step incrementando la discrepanza con la soluzione analitica. Ciò risulta evidente dal risultato della simulazione rappresentata in figura \ref{fig:rk_error}.
+La precisione del metodo RK4 decresce considerevolmente con all'aumentare del numero di step della simulazione. L'errore teorico stimato infatti si accumula ad ogni step incrementando la discrepanza con la soluzione esatta. Ciò risulta evidente dal risultato della simulazione rappresentata in figura \ref{fig:rk_error}.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{rk_error}
-\caption{Due simulazioni del sistema di Chua con uguali condizioni iniziali e differenti $h$. La linea rossa rappresenta la soluzione numerica calcolata con $h$ doppio rispetto a quello della soluzione in blu}
+\caption{Due simulazioni del sistema di Chua con uguali condizioni iniziali e differenti $h$. La linea rossa rappresenta una soluzione numerica calcolata con $h$ doppio rispetto a quello della soluzione in blu.}
 \label{fig:rk_error}
 \end{figure}
 
