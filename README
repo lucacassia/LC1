@@ -1,1 +1,8 @@
 Laboratorio di Fisica Computazionale
+
+Dipendenze Linux:
+    -> glew
+
+Dipendenze Macosx:
+    -> Xcode
+    -> glew

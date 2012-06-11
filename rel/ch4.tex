@@ -38,11 +38,11 @@ dove ora $(1+\frac{1}{4\hbar^2}A^2dt^2)$ è Hermitiano e si può quindi risolver
 L'idea che sta alla base di questo metodo è che se in un intervallo di tempo $dt$ la funzione $\psi(t)$ evolve in $\psi(t+dt)$, allora facendo evolvere $\psi(t)$ in avanti nel tempo per $\frac{dt}{2}$ e $\psi(t+dt)$ indietro nel tempo sempre di $\frac{dt}{2}$ le due funzioni dovranno necessariamente coincidere.
 \\
 
-Al fine di migliorare la precisione dell'approssimazione è anche possibile utilizzare sviluppi a ordini superiori in $t$ al costo, tuttavia, di incrementare considerevomente la complessità dell'algoritmo. L'unitarietà dell'operatore è evidentemente preservata ad ogni ordine proprio grazie a come è stata costruita l'approssimazione.
+Al fine di migliorare la precisione dell'approssimazione è anche possibile utilizzare sviluppi a ordini superiori in $t$ al costo, tuttavia, di incrementare considerevomente la complessità dell'algoritmo.
 \\
 
 La formula per l'evolutore al secondo ordine è data da
 $$\psi(t+dt)=\left(1+\frac{i}{2\hbar}Adt-\frac{1}{8\hbar^2}A^2dt^2\right)^{-1}\left(1-\frac{i}{2\hbar}Adt-\frac{1}{8\hbar^2}A^2dt^2\right)\psi(t)$$
 che svolgendo il procedimento descritto per lo sviluppo al primo ordine diventa
 $$\left(1+\frac{1}{64\hbar^4}A^4dt^4\right)\psi(t+dt)=\left(1-\frac{i}{2\hbar}Adt-\frac{3}{8\hbar^2}A^2dt^2+\frac{i}{16\hbar^3}A^3dt^3+\frac{1}{64\hbar^4}A^4dt^4\right)\psi(t)$$
-
+L'unitarietà dell'operatore è evidentemente preservata ad ogni ordine proprio grazie al modo in cui è stata costruita la formula per l'approssimazione dell'evolutore.
