@@ -33,7 +33,7 @@ double newS(double *x,double y,int i){
     return action(tmp);
 }
 
-double * metropolis(double *x){
+void metropolis(double *x){
     double y, news, r[2*N];
     ranlxd(r,2*N);
     int i; for(i = 0; i < N; i++){
@@ -44,7 +44,6 @@ double * metropolis(double *x){
             S = news;
         }
     }
-    return x;
 }
 
 double correlation(double* x,int dt){
