@@ -7,41 +7,48 @@
 
 #define N 32
 
-double M = 1;
-double W = 1;
-double D = 3;
+double M = 1.0f;
+double W = 1.0f;
+double D = 3.0f;
+double S = 0.0f;
 
 double V(double x){
     return M*W*W*x*x/2;
 }
 
-double dS(double *x,double y,int i){
-    return M*((x[i]-y)*(x[(i+1)%N]+x[(i-1+N)%N])+(y*y-x[i]*x[i]))+V(y)-V(x[i]);
-}
-
 double action(double *x){
-    double s = 0;
+    double s = 0.0f;
     int i; for(i = 0; i < N-1; i++)
         s += M*(x[i+1]-x[i])*(x[i+1]-x[i])/2+(V(x[i])+V(x[i+1]))/2;
     return s;
 }
 
-double metropolis(double *x){
-    double DS = 0, y, ds, r[2*N];
+double newS(double *x,double y,int i){
+    double tmp[N]; int j;
+    for(j = 0; j < N; j++)
+        if(i == j)
+            tmp[j] = y;
+        else
+            tmp[j] = x[j];
+    return action(tmp);
+}
+
+double * metropolis(double *x){
+    double y, news, r[2*N];
     ranlxd(r,2*N);
     int i; for(i = 0; i < N; i++){
-        y = x[i]+D*(2*r[i]-1);
-        ds = dS(x,y,i);
-        if(r[N+i] < exp(-ds)){
+        y = x[i]+D*(2.0f*r[i]-1.0f);
+        news = newS(x,y,i);
+        if(r[N+i] < exp(-news+S)){
             x[i] = y;
-            DS += ds;
+            S = news;
         }
     }
-    return DS;
+    return x;
 }
 
 double correlation(double* x,int dt){
-    double odt = 0;
+    double odt = 0.0f;
     int i; for(i = 0; i < N; i++)
         odt += x[i]*x[(i+dt)%N];
     return odt/N;
@@ -49,7 +56,7 @@ double correlation(double* x,int dt){
 
 double autoCorrelation(int i,int k,int n,double* data){
     double mean,var,Rk;
-    mean = var = Rk = 0;
+    mean = var = Rk = 0.0f;
     int t; for(t = 0; t < n-k; t++){
         double tmp = data[N*t+i];
         Rk += tmp*data[N*(t+k)+i];
@@ -76,15 +83,17 @@ int main(int argc,char* argv[]){
     /*init variables*/
     double x[N],c[N],var[N],tmp;
     for(i = 0; i < N; i++){
-        x[i] = 0;
-        c[i] = var[i] = 0;
+        x[i] = 100.0f;
+        c[i] = var[i] = 0.0f;
     }
 
     /*action*/
-    double S = action(x);
+    S = action(x);
     FILE* f = fopen("action.dat","w");
-    for(i = 0; i < 1e3; i++)
-        fprintf(f,"%d\t%lf\n",(i+1),S += metropolis(x));
+    for(i = 0; i < 1e3; i++){
+        metropolis(x);
+        fprintf(f,"%d\t%lf\n",(i+1), S);
+    }
     fclose(f);
 
     /*metropolis loop*/
@@ -122,11 +131,11 @@ int main(int argc,char* argv[]){
     /*deltaE & W*/
     double dE = 0, W = 0;
     for(k = 2; k < 5; k++){
-        dE += tmp = acosh((c[k+1]+c[k-1])/(2*c[k]));
-        W += sqrt(c[k]*exp(tmp*N/2.0)/(2*cosh(tmp*(N/2.0-k))));
+        dE += tmp = acosh((c[k+1]+c[k-1])/(2.0f*c[k]));
+        W += sqrt(c[k]*exp(tmp*N/2.0f)/(2.0f*cosh(tmp*(N/2.0f-k))));
     }
-    dE /= 3;
-    W /= 3;
+    dE /= 3.0f;
+    W /= 3.0f;
 
     /*cluster generation*/
     double mcl[6];
@@ -140,22 +149,22 @@ int main(int argc,char* argv[]){
     }
 
     /*compute mean values*/
-    double dEm = 0, Wm = 0;
+    double dEm = 0.0f, Wm = 0.0f;
     for(k = 2; k < 5; k++){
-        dEm += tmp = acosh((mcl[k+1]+mcl[k-1])/(2*mcl[k]));
-        Wm += sqrt(mcl[k]*exp(tmp*N/2.0)/(2*cosh(tmp*(N/2.0-k))));
+        dEm += tmp = acosh((mcl[k+1]+mcl[k-1])/(2.0f*mcl[k]));
+        Wm += sqrt(mcl[k]*exp(tmp*N/2.0f)/(2.0f*cosh(tmp*(N/2.0f-k))));
     }
 
     /*compute variance*/
-    double var_dE = 0, var_W = 0;
+    double var_dE = 0.0f, var_W = 0.0f;
     for(j = 0; j < bin; j++){
-        double tmp1 = 0, tmp2 = 0;
+        double tmp1 = 0.0f, tmp2 = 0.0f;
         for(k = 2; k < 5; k++){
-            tmp1 += tmp = acosh((dtcl[(k+1)*bin+j]+dtcl[(k-1)*bin+j])/(2*dtcl[k*bin+j]));
-            tmp2 += sqrt(c[k]*exp(tmp*N/2.0)/(2*cosh(tmp*(N/2.0-k))));
+            tmp1 += tmp = acosh((dtcl[(k+1)*bin+j]+dtcl[(k-1)*bin+j])/(2.0f*dtcl[k*bin+j]));
+            tmp2 += sqrt(c[k]*exp(tmp*N/2.0f)/(2.0f*cosh(tmp*(N/2.0f-k))));
         }
-        var_dE += (tmp1-dEm)*(tmp1-dEm)/9;
-        var_W += (tmp2-Wm)*(tmp2-Wm)/9;
+        var_dE += (tmp1-dEm)*(tmp1-dEm)/9.0f;
+        var_W += (tmp2-Wm)*(tmp2-Wm)/9.0f;
     }
     free(dtcl);
     var_dE = (var_dE*(bin-1))/bin;
