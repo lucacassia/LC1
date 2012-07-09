@@ -110,7 +110,7 @@ int main(int argc,char* argv[]){
     /*autocorrelation*/
     f = fopen("autocorrelation.dat","w");
     for(i = 0; i < 30; i++)
-        fprintf(f,"%d\t%lf\n",i,autoCorrelation(1,i,bin*width,data));
+        fprintf(f,"%d\t%lf\t%lf\t%lf\t%lf\t%lf\n",i,autoCorrelation(1,i,bin*width,data),autoCorrelation(2,i,bin*width,data),autoCorrelation(3,i,bin*width,data),autoCorrelation(4,i,bin*width,data),autoCorrelation(5,i,bin*width,data));
     fclose(f);
     free(data);
 

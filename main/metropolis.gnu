@@ -3,6 +3,7 @@ set term postscript enhanced color landscape lw 1 "Verdana,10"
 set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5 # --- indigo
 set style line 2 lc rgb '#0060ad' lt 1 lw 1 pt 7 ps 0.5 # --- indigo
 set style line 3 lc rgb '#bf0d23' lt 1 lw 1 pt 7 ps 0.5 # --- red
+set style line 4 lc rgb '#0060ad' lt 1 lw 1  # --- indigo
 set border linewidth 1.5
 set grid
 unset key
@@ -26,7 +27,7 @@ plot 'correlation.dat' with linespoints ls 1
 set xlabel "k"
 set ylabel "R[k]"
 set output 'autocorrelation.eps'
-plot 'autocorrelation.dat' with linespoints ls 1
+plot 'autocorrelation.dat' using 1:2 with linespoints ls 4,'autocorrelation.dat' using 1:3 with linespoints ls 4,'autocorrelation.dat' using 1:4 with linespoints ls 4,'autocorrelation.dat' using 1:5 with linespoints ls 4,'autocorrelation.dat' using 1:6 with linespoints ls 4
 
 #VARIANCE
 set log xy

@@ -122,9 +122,9 @@ void resize(int w, int h)
 void idle()
 {
     if(active){
-        plist_evolve_ode(&list, NULL, ODE_CHUA, 1e-3);
-        plist_evolve_ode(&list, NULL, ODE_CHUA, 1e-3);
-        plist_evolve_ode(&shadow, NULL, ODE_CHUA, 2e-3);
+        plist_evolve_ode(&list, NULL, ODE_NONLINEAR, 1e-3);
+        plist_evolve_ode(&list, NULL, ODE_NONLINEAR, 1e-3);
+        plist_evolve_ode(&shadow, NULL, ODE_NONLINEAR, 2e-3);
     }
     glutPostRedisplay();
 }
@@ -212,8 +212,8 @@ void mouse(int button, int state, int x, int y)
         plist tmp = getPosition(x,height-y);
         plist_erase(&list);
         plist_erase(&shadow);
-        plist_add_front(&list, tmp.x, tmp.y, tmp.z, tmp.t);
-        plist_add_front(&shadow, tmp.x, tmp.y, tmp.z, tmp.t);
+        plist_add_front(&list, translation.x + tmp.x * scaling, translation.y + tmp.y * scaling, translation.z + tmp.z * scaling, tmp.t);
+        plist_add_front(&shadow, translation.x + tmp.x * scaling, translation.y + tmp.y * scaling, translation.z + tmp.z * scaling, tmp.t);
     }
 }
 

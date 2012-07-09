@@ -3,7 +3,7 @@
 
 #include <math.h>
 
-typedef enum { ODE_CHAOTIC, ODE_VANDERPOL, ODE_DUFFING, ODE_LORENZ, ODE_ROSSLER, ODE_RABINOVICH_FABRIKANT, ODE_CHUA } ODE_TYPE;
+typedef enum { ODE_CHAOTIC, ODE_VANDERPOL, ODE_DUFFING, ODE_NONLINEAR, ODE_LORENZ, ODE_ROSSLER, ODE_RABINOVICH_FABRIKANT, ODE_CHUA } ODE_TYPE;
 
 double dummy(double x,double y, double z,double t) {return 0;}
 
@@ -15,6 +15,9 @@ double vanderpol_y(double x,double y, double z,double t) {return 4*(1-x*x)*y-x;}
 
 double duffing_x(double x,double y, double z,double t) {return y;}
 double duffing_y(double x,double y, double z,double t) {return 0.3*cos(t)-0.2*y+x-pow(x,3);}
+
+double nonlinear_x(double x,double y, double z,double t) {return y;}
+double nonlinear_y(double x,double y, double z,double t) {return -x+y*(1-3*x*x-2*y*y);}
 
 double lorenz_x(double x,double y,double z, double t) {return 10*(y-x);}
 double lorenz_y(double x,double y,double z, double t) {return x*(28-z)-y;}
@@ -86,6 +89,11 @@ void plist_evolve_ode(plist **head_ptr, plist **tail_ptr, ODE_TYPE type, double 
         case ODE_DUFFING:
             function_x = duffing_x;
             function_y = duffing_y;
+            function_z = dummy;
+            break;
+        case ODE_NONLINEAR:
+            function_x = nonlinear_x;
+            function_y = nonlinear_y;
             function_z = dummy;
             break;
         case ODE_LORENZ:
