@@ -109,8 +109,12 @@ int main(int argc,char* argv[]){
 
     /*autocorrelation*/
     f = fopen("autocorrelation.dat","w");
-    for(i = 0; i < 30; i++)
-        fprintf(f,"%d\t%lf\t%lf\t%lf\t%lf\t%lf\n",i,autoCorrelation(1,i,bin*width,data),autoCorrelation(2,i,bin*width,data),autoCorrelation(3,i,bin*width,data),autoCorrelation(4,i,bin*width,data),autoCorrelation(5,i,bin*width,data));
+    for(i = 0; i < 30; i++){
+        fprintf(f,"%d",i);
+        for(j = 1; j < 32; j++)
+            fprintf(f,"\t%lf",autoCorrelation(j,i,bin*width,data));
+        fprintf(f,"\n");
+    }
     fclose(f);
     free(data);
 
@@ -123,7 +127,7 @@ int main(int argc,char* argv[]){
         }
         c[k] /= bin;
         var[k] = var[k]/bin-c[k]*c[k];
-        fprintf(f,"%d\t%lf\t%lf\n",k,fabs(c[k]),var[k]);
+        fprintf(f,"%d\t%lf\t%lf\n",k,c[k],var[k]);
     }
     fclose(f);
 
@@ -168,7 +172,6 @@ int main(int argc,char* argv[]){
     free(dtcl);
     var_dE = (var_dE*(bin-1))/bin;
     var_W = (var_W*(bin-1))/bin;
-
 #ifdef HISTOGRAM
     /*plot histogram of dE*/
     f = fopen("histogram.dat","a");

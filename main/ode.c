@@ -65,7 +65,7 @@ void drawLine(plist *trail, double *color)
 
 int init()
 {
-    plist_add_front(&list,-1.0f,0.0f,0.5f,0.0f);
+    plist_add_front(&list  ,-1.0f,0.0f,0.5f,0.0f);
     plist_add_front(&shadow,-1.0f,0.0f,0.5f,0.0f);
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -122,9 +122,9 @@ void resize(int w, int h)
 void idle()
 {
     if(active){
-        plist_evolve_ode(&list, NULL, ODE_NONLINEAR, 1e-3);
-        plist_evolve_ode(&list, NULL, ODE_NONLINEAR, 1e-3);
-        plist_evolve_ode(&shadow, NULL, ODE_NONLINEAR, 2e-3);
+        plist_evolve_ode(&list, NULL, ODE_ROSSLER, 1e-3);
+        plist_evolve_ode(&list, NULL, ODE_ROSSLER, 1e-3);
+        plist_evolve_ode(&shadow, NULL, ODE_ROSSLER, 2e-3);
     }
     glutPostRedisplay();
 }

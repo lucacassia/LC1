@@ -8,7 +8,7 @@ typedef enum { ODE_CHAOTIC, ODE_VANDERPOL, ODE_DUFFING, ODE_NONLINEAR, ODE_LOREN
 double dummy(double x,double y, double z,double t) {return 0;}
 
 double chaotic_x(double x,double y, double z,double t) {return y;}
-double chaotic_y(double x,double y, double z,double t) {return -sin(x)-0.3*y+1.4*cos(2*t/3);}
+double chaotic_y(double x,double y, double z,double t) {return -sin(x)-0.3*y+0.9*cos(2*t/3);}
 
 double vanderpol_x(double x,double y, double z,double t) {return y;}
 double vanderpol_y(double x,double y, double z,double t) {return 4*(1-x*x)*y-x;}

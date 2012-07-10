@@ -80,3 +80,55 @@ La precisione del metodo RK4 decresce considerevolmente con all'aumentare del nu
 \label{fig:ode}
 \end{figure}
 
+
+\subsection{Pendolo Caotico}
+Si trovano ora soluzioni numeriche di un sistema non lineare e se ne studia il comportamento al variare dei suoi parametri.
+\\
+
+L'equazione del moto di un pendolo non lineare forzato e caotico è:
+$$\ddot{\theta}(t) = -\sin(\theta(t)) - q\dot{\theta}(t) + b\cos(\omega t)$$
+È possibile ricondurre l'equazione precedente ad un sistema di equazioni differenziali del primo ordine effettuando la sostituzione $x=\theta$, $y=\dot{\theta}$ :
+\[
+  \Rightarrow \left\{
+  \begin{array}{l l}
+    \dot{x}=y\\
+    \dot{y}=-\sin(x) - qy + b\cos(\omega t)\\
+  \end{array} \right.
+\]
+
+Applicando ora il metodo RK4 si ottengono le seguenti formule per l'evoluzione delle variabili dinamiche $x,y$
+$$x_{n+1}=x_n+hy_n$$
+$$y_{n+1}=y_n+\tfrac16 k_{y,1}+\tfrac13 k_{y,2}+\tfrac13 k_{y,3}+\tfrac16k_{y,4}$$
+dove i $k_{y,i}$ sono i coefficienti definiti nel paragrafo iniziale e relativi alla seconda equazione del sistema. È facile verificare, invece, che i coefficienti $k_{x,i}$ sono banalmente tutti uguali a $hy_n$, dal momento che $\frac{\partial\dot{x}}{\partial x}=0$.
+\\
+
+Di seguito sono raffigurate le traiettorie nello spazio delle fasi $(x,y)$ dell'oscillatore di alcune soluzioni, con uguali condizioni iniziali e $h=10^{-3}$.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{ode1}
+\caption{Soluzione per $q=0.3$, $b=0.1$, $\omega=2/3$}
+\label{fig:ode1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{ode2}
+\caption{Soluzione per $q=0.3$, $b=0.5$, $\omega=2/3$}
+\label{fig:ode2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{ode3}
+\caption{Soluzione per $q=0.3$, $b=0.9$, $\omega=2/3$}
+\label{fig:ode3}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{ode4}
+\caption{Soluzione per $q=0.3$, $b=1.4$, $\omega=2/3$}
+\label{fig:ode4}
+\end{figure}
+
+Quello che si nota è che il sistema presenta in tutti e quattro i casi un ciclo limite. Aumentando di poco l'intensità della forzante aumentano anche le dimensioni di tale curva. Quando però $b$ diviene troppo grande, come nel terzo e quarto caso (fig.\ref{fig:ode3}, \ref{fig:ode4}), il ciclo limite assume una topologia totalmente differente.

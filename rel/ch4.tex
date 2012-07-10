@@ -46,3 +46,108 @@ $$\psi(t+dt)=\left(1+\frac{i}{2\hbar}Adt-\frac{1}{8\hbar^2}A^2dt^2\right)^{-1}\l
 che svolgendo il procedimento descritto per lo sviluppo al primo ordine diventa
 $$\left(1+\frac{1}{64\hbar^4}A^4dt^4\right)\psi(t+dt)=\left(1-\frac{i}{2\hbar}Adt-\frac{3}{8\hbar^2}A^2dt^2+\frac{i}{16\hbar^3}A^3dt^3+\frac{1}{64\hbar^4}A^4dt^4\right)\psi(t)$$
 L'unitarietà dell'operatore è evidentemente preservata ad ogni ordine proprio grazie al modo in cui è stata costruita la formula per l'approssimazione dell'evolutore.
+
+
+\subsection{Scattering}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{potential}
+\label{fig:potential}
+\end{figure}
+Si utilizza un potenziale centrale con buca profonda $-V_0$, del tipo mostrato in figura. La funzione d'onda viene inizializzata ad una gaussiana bidimensionale stazionaria decentrata, posta in un reticolo 256x256 con condizioni periodiche al contorno.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{image0}
+  \caption{$\psi(t_0)$}
+\label{fig:image0}
+\end{figure}
+
+
+\begin{figure}[H]
+ \begin{subfigure}[b]{0.32\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{image5.pdf}
+  \caption{$|V_0|=0.25$}
+  \label{fig:image5}
+ \end{subfigure}
+ \begin{subfigure}[b]{0.32\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{image6.pdf}
+  \caption{$|V_0|=0.50$}
+  \label{fig:image6}
+ \end{subfigure}
+ \begin{subfigure}[b]{0.32\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{image7.pdf}
+  \caption{$|V_0|=1.00$}
+  \label{fig:image7}
+ \end{subfigure}
+
+ \quad
+
+ \begin{subfigure}[b]{0.32\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{image8.pdf}
+  \caption{$|V_0|=2.50$}
+  \label{fig:image8}
+ \end{subfigure}
+ \begin{subfigure}[b]{0.32\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{image9.pdf}
+  \caption{$|V_0|=5.00$}
+  \label{fig:image9}
+ \end{subfigure}
+ \begin{subfigure}[b]{0.32\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{image10.pdf}
+  \caption{$|V_0|=10.00$}
+  \label{fig:image10}
+ \end{subfigure}
+
+ \caption{Soluzioni numeriche per differenti valori del potenziale $V_0$. Tutti gli shot sono stati effettuati allo stesso tempo di esecuzione, cioè dopo che il pacchetto si è scontrato per la prima volta con la buca.}\label{fig:images_V0}
+\end{figure}
+
+Per grandi valori di $|V_0|$ il pacchetto d'onda non riesce ad attraversare l'ostacolo e viene scatterato radialmente. Se inoltre le dimensioni della buca sono maggiori di quelle del pacchetto, quest'ultimo può addirittura venire completamente riflesso e distorto. Al diminuire di $|V_0|$ invece si può arrivare ad ottenere uno stato momentaneamente legato all'interno della buca, come in figura \ref{fig:bound}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{bound}
+\caption{Dettaglio dello stato legato.}
+\label{fig:bound}
+\end{figure}
+
+\begin{figure}[H]
+ \begin{subfigure}[b]{0.5\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{image1.pdf}
+  \caption{$dt=0.25$, $1200$ frames}
+  \label{fig:image1}
+ \end{subfigure}
+ \begin{subfigure}[b]{0.5\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{image2.pdf}
+  \caption{$dt=0.5$, $600$ frames}
+  \label{fig:image2}
+ \end{subfigure}
+
+ \quad
+
+ \begin{subfigure}[b]{0.5\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{image3.pdf}
+  \caption{$dt=1$, $300$ frames}
+  \label{fig:image3}
+ \end{subfigure}
+ \begin{subfigure}[b]{0.5\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{image4.pdf}
+  \caption{$dt=2$, $150$ frames}
+  \label{fig:image4}
+ \end{subfigure}
+
+ \caption{Soluzioni numeriche per differenti valori del parametro $dt$}\label{fig:images_dt}
+\end{figure}
+
+Come si nota in fig.\ref{fig:images_dt} la differenza fra simulazioni con diversi $dt$ è minima. Per tempi di simulazione non troppo grandi, all'aumentare del parametro $dt$ corrisponde una variazione equivalente ad un piccolo sfasamento temporale nelle soluzioni calcolate.
+
+

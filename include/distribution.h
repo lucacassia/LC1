@@ -6,7 +6,7 @@
 #include <string.h>
 #include "complex_t.h"
 
-double dt = 1.0;
+double dt = 0.25;
 double mass = 1.0;
 double omega  = 1.0;
 double hbar = 1.0;
@@ -14,8 +14,8 @@ double hbar = 1.0;
 double harmonic(double x,double y){ return mass*omega*omega*((x)*(x)+(y)*(y))/2.0; }
 
 double mix(double x,double y){
-    if(hypot(x,y)<0.25)
-        return -10;
+    if(hypot(x,y)<0.1)
+        return -0.25;
     return mass*omega*omega*((x)*(x)+(y)*(y))/2.0;
 }
 

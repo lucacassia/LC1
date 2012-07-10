@@ -3,7 +3,7 @@ set term postscript enhanced color landscape lw 1 "Verdana,10"
 set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 1.5 # --- indigo
 set style line 2 lc rgb '#0060ad' lt 1 lw 1 pt 7 ps 0.5 # --- indigo
 set style line 3 lc rgb '#bf0d23' lt 1 lw 1 pt 7 ps 0.5 # --- red
-set style line 4 lc rgb '#0060ad' lt 1 lw 1  # --- indigo
+set style line 4 lc rgb '#0060ad' pt 1 # --- indigo
 set border linewidth 1.5
 set grid
 unset key
@@ -27,7 +27,37 @@ plot 'correlation.dat' with linespoints ls 1
 set xlabel "k"
 set ylabel "R[k]"
 set output 'autocorrelation.eps'
-plot 'autocorrelation.dat' using 1:2 with linespoints ls 4,'autocorrelation.dat' using 1:3 with linespoints ls 4,'autocorrelation.dat' using 1:4 with linespoints ls 4,'autocorrelation.dat' using 1:5 with linespoints ls 4,'autocorrelation.dat' using 1:6 with linespoints ls 4
+plot 'autocorrelation.dat' using 1:2 ls 4,\
+'autocorrelation.dat' using 1:3 ls 4,\
+'autocorrelation.dat' using 1:4 ls 4,\
+'autocorrelation.dat' using 1:5 ls 4,\
+'autocorrelation.dat' using 1:6 ls 4,\
+'autocorrelation.dat' using 1:7 ls 4,\
+'autocorrelation.dat' using 1:8 ls 4,\
+'autocorrelation.dat' using 1:9 ls 4,\
+'autocorrelation.dat' using 1:10 ls 4,\
+'autocorrelation.dat' using 1:11 ls 4,\
+'autocorrelation.dat' using 1:12 ls 4,\
+'autocorrelation.dat' using 1:13 ls 4,\
+'autocorrelation.dat' using 1:14 ls 4,\
+'autocorrelation.dat' using 1:15 ls 4,\
+'autocorrelation.dat' using 1:16 ls 4,\
+'autocorrelation.dat' using 1:17 ls 4,\
+'autocorrelation.dat' using 1:18 ls 4,\
+'autocorrelation.dat' using 1:19 ls 4,\
+'autocorrelation.dat' using 1:20 ls 4,\
+'autocorrelation.dat' using 1:21 ls 4,\
+'autocorrelation.dat' using 1:22 ls 4,\
+'autocorrelation.dat' using 1:23 ls 4,\
+'autocorrelation.dat' using 1:24 ls 4,\
+'autocorrelation.dat' using 1:25 ls 4,\
+'autocorrelation.dat' using 1:26 ls 4,\
+'autocorrelation.dat' using 1:27 ls 4,\
+'autocorrelation.dat' using 1:28 ls 4,\
+'autocorrelation.dat' using 1:29 ls 4,\
+'autocorrelation.dat' using 1:30 ls 4,\
+'autocorrelation.dat' using 1:31 ls 4,\
+'autocorrelation.dat' using 1:32 ls 4
 
 #VARIANCE
 set log xy

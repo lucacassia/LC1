@@ -19,7 +19,7 @@ all: rmxeq mkdep mkxeq rmpmk
 
 # main programs and required modules 
 
-MAIN = graph
+MAIN = graph test
 
 MODULES = shader_utils
 

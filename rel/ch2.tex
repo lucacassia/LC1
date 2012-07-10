@@ -12,7 +12,7 @@ L'ergodicità invece richiede che ogni stato dell'ensemble possa essere raggiunt
 
 Dato uno stato iniziale $\phi_1$, un'iterazione dell'algoritmo consiste delle seguenti istruzioni:
 \begin{itemize}
-    \item generare casualmente un nuovo candidato $\phi'$
+    \item generare con distribuzione piatta un nuovo candidato $\phi'$ nell'intorno di $\phi$ di raggio $\delta$
     \item calcolare $\Delta S = -\log(p(\phi')/p(\phi_1))$
     \item se $\Delta S < 0$ impostare il nuovo stato $\phi_2=\phi'$
     \item se $\Delta S > 0$ accettare il nuovo candidato con probabilità $p(\phi')/p(\phi_1)$, altrimenti mantenere $\phi_1$
@@ -40,10 +40,17 @@ $\langle x_l x_k\rangle = 2|\langle\tilde{E}_0|\hat{x}|\tilde{E}_1\rangle|^2\exp
 Partendo da uno stato $\phi_0$ casuale, è necessario lasciare del tempo affinchè sistema si porti alla $pdf$ di equilibrio. Tale processo, denominato termalizzazione, richiede in questo caso non più di 500 cicli di Metropolis, eseguiti i quali sarà possibile estrarre le configurazioni con la distribuzione desiderata. Come condizione iniziale si possono inizializzare tutte le variabili a zero (cold start) oppure a valori random (hot start).
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.5\textwidth]{action1}\includegraphics[width=0.5\textwidth]{action2}
-\caption{Cold start e hot start}
-\label{fig:action}
+\includegraphics[width=\textwidth]{action1}
+\caption{Cold Start}
+\label{fig:action1}
 \end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{action2}
+\caption{Hot Start}
+\label{fig:action2}
+\end{figure}
+
 Per il calcolo dell'azione euclidea si usa la formula
 $$S = a\displaystyle\sum\limits_{i=0}^{N-1} \mathcal{L}(x_{i},x_{i+1})$$
 dove
@@ -55,62 +62,164 @@ Tuttavia, per calcolare $\Delta S = S'-S$ si può tenere presente il fatto che a
 \end{eqnarray*}
 
 È facile verificare che l'algoritmo e i risultati possono essere resi indipendenti dal fattore di reticolo $a$ se si ridefiniscono propriamente i parametri del problema, il che è equivalente a porre $a=1$.
-
+\newpage
 \subsection{Autocorrelazione}
 
 Si studia ora la correlazione tra configurazioni generate a step consecutivi dell'algoritmo per ottenere una stima del tempo di decorrelazione $\tau_d$ del sistema. Tale dipendenza fra elementi della catena viene anche denominata \textit{autocorrelazione}.
 
 La formula per il correlatore di due stime dell'osservabile $O$ calcolate da stati estratti a istanti di tempo distanti $\tau$ è
-$$R(\tau)=\frac{\langle O_iO_{i+\tau}\rangle-\langle O_i\rangle^2}{\langle O_i^2\rangle-\langle O_i\rangle^2}=\frac{\frac{1}{n-\tau}\sum\limits_{i=0}^{n-\tau}O_iO_{i+\tau}-\langle O_i\rangle^2}{\langle O_i^2\rangle-\langle O_i\rangle^2}$$
+$$R(\tau)=\frac{\langle O_iO_{i+\tau}\rangle-\langle O_i\rangle^2}{\langle O_i^2\rangle-\langle O_i\rangle^2}=\frac{\frac{1}{n-\tau}\sum\limits_{i=0}^{n-\tau}O_iO_{i+\tau}-\langle O_i\rangle^2}{\langle O_i^2\rangle-\langle O_i\rangle^2}\simeq e^{-\tfrac{\tau}{\tau_d}}$$
 
 Il grafico dell'autocorrelazione $R(\tau)$ per l'osservabile $O(|l-k|)=\langle x_lx_k\rangle$ evidenzia la perdita esponenziale di correlazione nel segnale.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{autocorrelation}
-\caption{Autocorrelazione dell'osservabile $\langle x_lx_k\rangle$ per $|l-k|=1$}
+\caption{Autocorrelazione dell'osservabile $\langle x_lx_k\rangle$ per tutti i valori di $|l-k|$}
 \label{fig:autocorrelation}
 \end{figure}
-Il tempo di decorrelazione $\tau_d$ è dell'ordine delle unità ($\sim3$) e quindi, per $\tau>5\tau_d$ il segnale può essere considerato praticamente scorrelato.
-
+Il tempo di decorrelazione $\tau_d$ è dell'ordine delle unità ($\sim3$) e quindi, per $\tau>5\tau_d\sim15$ il segnale può essere considerato praticamente scorrelato.
+\newpage
 \subsection{Funzioni di Correlazione}
 
 Si calcola numericamente l'integrale $\int Dx \ x_lx_ke^{-S_E}$ applicando i metodi Monte Carlo e Metropolis in congiunzione. Affinchè le configurazioni utilizzate siano statisticamente indipendenti, si raggruppano i sample in $bin$ e si utilizza l'insieme delle medie su ogni $bin$ come sample di configurazioni per il calcolo MC. In questo modo, se la dimensione dei $bin$ è molto maggiore di $\tau_d$, la media sul $bin$ attenua considerevolmente gli effetti di correlazione e perciò il nuovo sample può essere considerato statisticamente unbiased.
+\\
 
 La media di un generico osservabile $O$ calcolata in questo modo è analiticamente uguale a quella calcolata per mezzo del sample completo di ogni elemento estratto. La varianza sui valori medi, tuttavia, differisce dalla varianza semplice di un termine proporzionale alla covarianza fra le variabili.
 
 \begin{figure}[H]
 \centering
+\begin{tabular}{|c|c|c|}
+\hline
+$\Delta t$ & $C(\Delta t)$ & $Var(C(\Delta t))$\\
+\hline
+0 & 0.480083 & 0.001332\\
+1 & 0.178045 & 0.000712\\
+2 & 0.065869 & 0.000509\\
+3 & 0.024213 & 0.000448\\
+4 & 0.008814 & 0.000431\\
+5 & 0.003284 & 0.000431\\
+6 & 0.001328 & 0.000432\\
+7 & 0.000660 & 0.000439\\
+8 & 0.000205 & 0.000433\\
+9 & -0.000037 & 0.000428\\
+10 & 0.000073 & 0.000427\\
+11 & 0.000157 & 0.000428\\
+12 & 0.000096 & 0.000433\\
+13 & -0.000041 & 0.000443\\
+14 & -0.000131 & 0.000495\\
+15 & -0.000091 & 0.000644\\
+
+\hline
+\end{tabular}
+\quad
+\begin{tabular}{|c|c|c|}
+\hline
+$\Delta t$ & $C(\Delta t)$ & $Var(C(\Delta t))$\\
+\hline
+16 & -0.000183 & 0.000845\\
+17 & -0.000091 & 0.000644\\
+18 & -0.000131 & 0.000495\\
+19 & -0.000041 & 0.000443\\
+20 & 0.000096 & 0.000433\\
+21 & 0.000157 & 0.000428\\
+22 & 0.000073 & 0.000427\\
+23 & -0.000037 & 0.000428\\
+24 & 0.000205 & 0.000433\\
+25 & 0.000660 & 0.000439\\
+26 & 0.001328 & 0.000432\\
+27 & 0.003284 & 0.000431\\
+28 & 0.008814 & 0.000431\\
+29 & 0.024213 & 0.000448\\
+30 & 0.065869 & 0.000509\\
+31 & 0.178045 & 0.000712\\
+\hline
+\end{tabular}
+\caption{Valori del correlatore delle coordinate in funzione della loro separazione nel reticolo temporale.}
+\label{tab:correlation}
+\end{figure}
+
+\begin{figure}[H]
+\centering
 \includegraphics[width=\textwidth]{correlation}
-\caption{L'andamento del correlatore delle coordinate in funzione della loro separazione nel reticolo temporale è quello di un coseno iperbolico centrato in $|l-k|=\tfrac{N}{2}$.}
+\caption{L'andamento del correlatore delle coordinate è quello di un coseno iperbolico centrato in $|l-k|=\tfrac{N}{2}$. }
 \label{fig:correlation}
 \end{figure}
+Sebbene il correlatore calcolato abbia un andamento complessivo in accordo con quello previsto dalla teoria, per valori di $\Delta t$ compresi fra $8$ e $24$ il segnale viene perso e prevale il rumore.
 
 \subsection{Calcolo di Grandezze Quanto-Meccaniche Secondarie}
 
-Come anticipato nell'introduzione sull'oscillatore armonico, è ora possibile ricavare stime di grandezze quanto-meccaniche secondarie direttamente dai valori delle funzioni di correlazione del sistema $\langle x_lx_k\rangle$. Le varianze sui valori medi sono calcolate attraverso la tecnica \textit{cluster jackknife}.
+Come anticipato nell'introduzione sull'oscillatore armonico, è ora possibile ricavare stime di grandezze quanto-meccaniche secondarie direttamente dai valori delle funzioni di correlazione $C(\Delta t)=\langle x_tx_{t+\Delta t}\rangle$ del sistema.
+Le varianze sui valori medi sono calcolate attraverso la tecnica \textit{cluster jackknife}.
 \\
 
-Sia $o_i$ la stima semplice dell'osservabile $O$ allo step $i$. La tecnica \textit{cluster jackknife} consiste nel ricavare le grandezze derivate $o^i$ (\textit{clusterization}), definite come $$o^i=\langle o\rangle+\frac{\langle o\rangle-o_i}{N_{bin}-1}$$ dove $N_{bin}$ indica il numero totale di $bin$. Nel caso in esame la grandezza $O$ è il correlatore calcolato nella sezione precedente.
+Sia $o_i$ la stima semplice dell'osservabile $O$ allo step $i$. La tecnica \textit{cluster jackknife} consiste nel ricavare le grandezze derivate $o^i$ (\textit{clusterization}), definite come $$o^i=\langle o\rangle+\frac{\langle o\rangle-o_i}{N_{bin}-1}$$ dove $N_{bin}$ indica il numero totale di $bin$. Nel caso in esame la grandezza $O$ è il correlatore calcolato nella sezione precedente ed è clusterizzato con $bin$ di ampiezza $100$ $(\gg\tau_d)$. Data una funzione $f=f(o)$, si definiscono $f^i=f(o^i)$ e $\langle f\rangle=f(\langle o\rangle)$. Si ottiene allora $$\sigma^2_f=\frac{N_{bin}-1}{N_{bin}}\sum\limits_i(f^i-\langle f\rangle)^2$$
 
-Data una funzione $f=f(o)$, si definiscono $f^i=f(o^i)$ e $\langle f\rangle=f(\langle o\rangle)$. Si ottiene allora $$\sigma^2_f=\frac{N_{bin}-1}{N_{bin}}\sum\limits_i(f^i-\langle f\rangle)^2$$
-I valori utilizzati per i parametri del sistema sono $N=32$, $\hbar=1$, $a=1$, $\omega=1$, $m=1$ e i valori ottenuti sono
+Si ricavano dunque le formule per l'energia $\Delta E$ e l'elemento di matrice $W$. Per comodità di pone $\lambda\equiv N/2-\Delta t$ e si utilizza il seguente trucco per ricavare $\Delta E$ dalla formula per il correlatore $C$:
 \begin{eqnarray*}
-\Delta E&=&0.9629359930\pm0.0057513054\\
-W&=&0.6679253933\pm0.0071617466
+ \lefteqn{\frac{C(\Delta t-1)+C(\Delta t+1)}{2C(\Delta t)}=}\\
+\\
+   && =\frac{\tfrac{1}{2} (e^{a\Delta E(\lambda+1)}+e^{-a\Delta E(\lambda+1)})+\tfrac{1}{2} (e^{a\Delta E(\lambda-1)}+e^{-a\Delta E(\lambda-1)})}{2\tfrac{1}{2} (e^{a\Delta E\lambda}+e^{-a\Delta E\lambda})}=\\
+\\
+   && =\frac{(e^{a\Delta E}+e^{-a\Delta E})(e^{a\Delta E\lambda}+e^{-a\Delta E\lambda})}{2(e^{a\Delta E\lambda}+e^{-a\Delta E\lambda})}=\cosh(a\Delta E)
 \end{eqnarray*}
 
-In figura \ref{fig:histogram} si nota come l'errore statistico coincida con una buona approssimazione con quello stimato dal \textit{cluster jackknife}.
+$$\Rightarrow a\Delta E=\cosh^{-1}\left(\frac{C(\Delta t-1)+C(\Delta t+1)}{2C(\Delta t)}\right)$$
+Trascurando il fattore $a$ e utilizzando i valori medi di $C$ calcolati su i $cluster$ si ottiene:
+$$\Delta E = \cosh^{-1}\left(\frac{\langle C(\Delta t+1)\rangle+\langle C(\Delta t-1)\rangle}{2 \langle C(\Delta t)\rangle}\right)$$
+$$W=\sqrt{\langle C(\Delta t)\rangle\frac{\exp\left(\Delta EN/2\right)}{2\cosh(\Delta E(N/2-\Delta t))}}$$
+La migliore stima di $\Delta E$ e $W$ viene quindi calcolata come media sui valori dati dalle precedenti formule utilizzando i valori del correlatore per $0\le\Delta t\le6$.
+\\
 
+I valori utilizzati per i parametri del sistema sono $N=32$, $\hbar=1$, $a=1$, $\omega=1$, $m=1$, $\delta=3$ con un numero di sweep pari a $10^6$. I valori ottenuti sono distribuiti gaussianamente attorno ai valori medi che possono essere quindi ricavati dal fit di gaussiane agli istogrammi dei sample:
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{histogram}
+\includegraphics[width=0.65\textwidth]{histogram}
 \caption{Distribuzione di $\Delta E$ a fissato numero di sweeps}
 \label{fig:histogram}
 \end{figure}
+Risultati dei fit:
+\begin{eqnarray*}
+\Delta E&=&0.962325\pm0.005945\\
+W&=&0.667925\pm0.007161
+\end{eqnarray*}
+
+Si nota inoltre che anche l'errore stimato dal \textit{cluster jackknife} è ditribuito gaussianamente intorno ad un valore molto vicino all'errore statistico ricavato dal fit.
+\\
+
+Si studia ora l'andamento della varianza $\sigma^2_{jackknife}$ in funzione del numero di $sweeps$.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{variance}
+\begin{tabular}{|c|c|}
+\hline
+$N_{sweeps}$ & $\sigma^2_{jackknife}$\\
+\hline
+1000 & 2.087426e-02\\
+2000 & 1.201255e-02\\
+4000 & 6.999672e-03\\
+8000 & 5.147464e-03\\
+16000 & 2.081578e-03\\
+32000 & 9.692904e-04\\
+64000 & 5.851014e-04\\
+128000 & 2.368376e-04\\
+256000 & 1.377607e-04\\
+512000 & 6.941350e-05\\
+1024000 & 3.300726e-05\\
+2048000 & 1.669044e-05\\
+4096000 & 8.221103e-06\\
+8192000 & 4.123789e-06\\
+16384000 & 2.054391e-06\\
+32768000 & 1.029125e-06\\
+65392000 & 5.224967e-07\\
+\hline
+\end{tabular}
+\label{tab:variance_tab}
+\end{figure}
+Rappresentando i dati ricavati dalle simulazioni in un grafico in scala bilogaritmica appare evidente che la varianza è inversamente proporzionale al numero di $sweeps$.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{variance}
 \caption{Varianza di $\Delta E$ in funzione del numero di sweeps}
 \label{fig:variance}
 \end{figure}
-
+Interpolando linearmente il logaritmo dei dati sia sulle ascisse che sulle ordinate si ottiene infatti un coefficiente angolare $m=-0.976\sim-1$. Se ne deduce quindi che: 
+$$\sigma\sim1/\sqrt{N_{sweeps}}$$
