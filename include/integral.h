@@ -38,12 +38,29 @@ double monte_carlo(double (*function)(double),double a,double b,unsigned n)
     unsigned i,j;
     double integral = 0;
     double r[32];
-    for(i = 0; i < n; i++)
-        for(j = 0; j < 32; j++){
-            ranlxd(r,32);
+    for(i = 0; i < n; i++){
+        ranlxd(r,32);
+        for(j = 0; j < 32; j++)
             integral += function(a+r[j]*(b-a));
-        }
-    return integral/32.0/n;
+    }
+    return (b-a)*integral/32.0/n;
 }
 
+/*
+double monte_carlo_gauss(double (*function)(double),double a,double b,unsigned n)
+{
+    unsigned i,j;
+    double integral = 0;
+    double r[32];
+    for(i = 0; i < 32 * n;){
+        gauss_dble(r,32);
+        for(j = 0; j < 32; j++)
+            if(a < r[j] && r[j] < b){
+                integral += function(r[j]);
+                i++;
+            }
+    }
+    return (b-a)*integral/32.0/n;
+}
+*/
 #endif

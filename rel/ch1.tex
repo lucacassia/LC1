@@ -84,23 +84,236 @@ L'errore statistico dell'integrazione Monte Carlo è dato da $\sigma(f/p)/\sqrt 
 Il campionamento di importanza è efficace se si sceglie $p(x)$ tale che approssimi bene $|f(x)|$ e tale che si sia capaci di generare numeri casuali con distribuzione di probabilità $P(x)$.
 
 \section{Esempi}
-Si dimostrano i metodi descritti nei paragrafi precedenti applicandoli al calcolo dell'integrale $$\int_1^2\log(1+x)dx$$
-In figura sono rappresentati gli errori rispetto al risultato analitico dei quattro metodi analizzati in funzione del numero di sottointervalli utilizzati per i metodi di quadratura numerica o del numero di iterazioni per il metodo Monte Carlo.
+Si dimostrano ora i metodi descritti nei paragrafi precedenti applicandoli al calcolo di alcuni integrali particolari. Le funzioni integrande scelte sono:
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.75\textwidth]{integral}
-\caption{Errore calcolato}
-\label{fig:integral}
+\begin{tabular}{lccl}
+funzione & & & primitiva\\\\
+$\log(1+x)$ & & & $-x + \log(1 + x) + x \log(1 + x)$\\\\
+$x^9 - x^7 + 3$ & & & $\frac{x^{10}}{10} - \frac{x^8}{8} + 3x$
+\end{tabular}
 \end{figure}
-
-Dei metodi di quadratura l'algoritmo di Gauss-Legendre di grado $5$ è il più preciso, con errori dell'ordine di $10^{-15}$ anche per $n$ piccolo. Al di sotto di $10^{-15}$ l'errore diventa instabile a causa della precisione finita del calcolatore. La precisione delle formule di Newton Cotes invece è bassa per $n$ piccolo ma aumenta all'aumentare di $n$ e del grado dell'approssimazione.
-
-Come previsto, il metodo Monte Carlo risulta il più impreciso, con un errore di molti ordini di grandezza superiore a quello dei metodi di quadratura. Il Monte Carlo è infatti impiegato prevalentemente in quei casi in cui la dimensione del dominio di integrazione è troppo grande per poter impiegare algoritmi di tipo deterministico.
+Tutti gli integrali sono calcolati tenendo fisso l'intervallo d'integrazione $I=[1,2]$ e variando il numero di suddivisioni per ogni metodo. Conoscendo inoltre l'espressione analitica delle primitive delle due funzioni integrande è possibile calcolare i risultati esatti ed usare questi ultimi per confrontare l'errore del risultato numerico con l'errore previsto. Si sono calcolati analiticamente dunque alcuni valori utili alla stima di tale errore:
 \\
 
-La distribuzione dell'errore MC in funzione del numero di elementi del sample, calcolata sull'integrale
-$$\int_\Omega d\mu = \tfrac{\pi}{4}$$
-dove $\Omega$ indica il primo quarto di circonferenza goniometrica, verifica la relazione $\sigma_{MC}\simeq 1/\sqrt N$ (figura \ref{fig:pi}).
+\begin{figure}[H]
+\centering
+\begin{tabular}{ccc}
+$f$ & $\max(f^{(1)})$ & $\max(f^{(4)})$\\
+\hline
+$\log(1+x)$ & $0.5$ & $-0.0740742$\\
+$x^9 - x^7 + 3$ & $1856$ & $90048$
+\end{tabular}
+\end{figure}
+
+In seguito si indicheranno con $E(f)$ l'errore stimato analiticamente e con $\Delta(f)$ l'errore calcolato numericamente.
+
+\subsection{Newton-Cotes 1}
+
+\begin{figure}[H]
+ \begin{subfigure}[b]{0.5\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{integral1a}
+  \caption{Log}
+ \end{subfigure}
+ \begin{subfigure}[b]{0.5\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{integral1b}
+  \caption{Pol}
+ \end{subfigure}
+\caption{Confronto errore NC1 calcolato numericamente (rosso) e previsto analiticamente (blu).}
+\label{fig:integral1}
+\end{figure}
+
+\begin{figure}[H]
+ \begin{subtable}[b]{0.5\textwidth}
+  \centering\small
+\begin{tabular}{lll}
+\hline
+$n$ & $\Delta(Log)$ & $E(Log)$\\
+\hline
+10 & 1.388645e-04 & 4.166667e-04\\
+20 & 3.472070e-05 & 1.041667e-04\\
+40 & 8.680460e-06 & 2.604167e-05\\
+80 & 2.170133e-06 & 6.510417e-06\\
+160 & 5.425343e-07 & 1.627604e-06\\
+320 & 1.356337e-07 & 4.069010e-07\\
+640 & 3.390842e-08 & 1.017253e-07\\
+1280 & 8.477104e-09 & 2.543132e-08\\
+2560 & 2.119278e-09 & 6.357829e-09\\
+5120 & 5.298190e-10 & 1.589457e-09\\
+10240 & 1.324540e-10 & 3.973643e-10\\
+20480 & 3.311029e-11 & 9.934107e-11\\
+40960 & 8.277934e-12 & 2.483527e-11\\
+81920 & 2.073119e-12 & 6.208817e-12\\
+\end{tabular}
+ \end{subtable}
+ \begin{subtable}[b]{0.5\textwidth}
+  \centering\small
+\begin{tabular}{lll}
+\hline
+$n$ & $\Delta(Pol)$ & $E(Pol)$\\
+\hline
+10 & 1.541035e+00 & 1.546667e+00\\
+20 & 3.860018e-01 & 3.866667e-01\\
+40 & 9.654698e-02 & 9.666667e-02\\
+80 & 2.413966e-02 & 2.416667e-02\\
+160 & 6.035096e-03 & 6.041667e-03\\
+320 & 1.508785e-03 & 1.510417e-03\\
+640 & 3.771970e-04 & 3.776042e-04\\
+1280 & 9.429930e-05 & 9.440104e-05\\
+2560 & 2.357483e-05 & 2.360026e-05\\
+5120 & 5.893707e-06 & 5.900065e-06\\
+10240 & 1.473427e-06 & 1.475016e-06\\
+20480 & 3.683568e-07 & 3.687541e-07\\
+40960 & 9.208927e-08 & 9.218852e-08\\
+81920 & 2.302198e-08 & 2.304713e-08\\
+\end{tabular}
+ \end{subtable}
+\end{figure}
+
+Come previsto, l'errore calcolato segue l'andamento ricavato analiticamente pur rimanendo sempre al di sotto di quest'ultimo. $E(f)$ infatti è solo il limite superiore per l'errore $\Delta(f).$ Nel caso della polinomiale inoltre i due errori risultano particolarmente vicini.
+
+\subsection{Newton-Cotes 2}
+
+\begin{figure}[H]
+ \begin{subfigure}[b]{0.5\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{integral2a}
+  \caption{Log}
+ \end{subfigure}
+ \begin{subfigure}[b]{0.5\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{integral2b}
+  \caption{Pol}
+ \end{subfigure}
+\caption{Confronto errore NC2 calcolato numericamente (rosso) e previsto analiticamente (blu).}
+\label{fig:integral2}
+\end{figure}
+
+\begin{figure}[H]
+ \begin{subtable}[b]{0.5\textwidth}
+  \centering\small
+\begin{tabular}{lll}
+\hline
+$n$ & $\Delta(Log)$ & $E(Log)$\\
+\hline
+10 & 6.101824e-09 & 8.230467e-08\\
+20 & 3.816787e-10 & 5.144042e-09\\
+40 & 2.386025e-11 & 3.215026e-10\\
+80 & 1.491696e-12 & 2.009391e-11\\
+160 & 9.325873e-14 & 1.255870e-12\\
+320 & 6.328271e-15 & 7.849185e-14\\
+640 & 5.551115e-16 & 4.905740e-15\\
+1280 & 1.443290e-15 & 3.066088e-16\\
+2560 & 1.110223e-15 & 1.916305e-17\\
+5120 & 2.442491e-15 & 1.197691e-18\\
+10240 & 1.443290e-15 & 7.485566e-20\\
+20480 & 4.440892e-15 & 4.678479e-21\\
+40960 & 9.992007e-16 & 2.924049e-22\\
+81920 & 3.996803e-15 & 1.827531e-23\\
+\end{tabular}
+ \end{subtable}
+ \begin{subtable}[b]{0.5\textwidth}
+  \centering\small
+\begin{tabular}{lll}
+\hline
+$n$ & $\Delta(Pol)$ & $E(Pol)$\\
+\hline
+10 & 9.908609e-04 & 1.000533e-01\\
+20 & 6.203492e-05 & 6.253333e-03\\
+40 & 3.878841e-06 & 3.908333e-04\\
+80 & 2.424535e-07 & 2.442708e-05\\
+160 & 1.515373e-08 & 1.526693e-06\\
+320 & 9.471108e-10 & 9.541829e-08\\
+640 & 5.920242e-11 & 5.963643e-09\\
+1280 & 3.666401e-12 & 3.727277e-10\\
+2560 & 1.421085e-13 & 2.329548e-11\\
+5120 & 1.278977e-13 & 1.455968e-12\\
+10240 & 2.842171e-14 & 9.099798e-14\\
+20480 & 4.263256e-14 & 5.687374e-15\\
+40960 & 7.105427e-14 & 3.554608e-16\\
+81920 & 5.684342e-14 & 2.221630e-17\\
+\end{tabular}
+ \end{subtable}
+\end{figure}
+
+L'errore per il metodo NC2 si comporta come previsto finchè non raggiunge valori dell'ordine di grandezza di $10^{-14}$ per i quali la precisione finita del calcolatore limita la precisione del calcolo introducendo del rumore nei dati.
+
+\subsection{Quadratura Gaussiana 5}
+
+\begin{figure}[H]
+ \begin{subtable}[b]{0.5\textwidth}
+  \centering
+\begin{tabular}{lll}
+\hline
+$n$ & $\Delta(Log)$\\
+\hline
+10 & 2.220446e-16\\
+20 & 2.220446e-16\\
+40 & 1.110223e-16\\
+80 & 0.000000e+00\\
+160 & 5.551115e-16\\
+320 & 1.110223e-15\\
+640 & 2.220446e-16\\
+1280 & 1.332268e-15\\
+2560 & 1.110223e-15\\
+5120 & 2.664535e-15\\
+10240 & 1.110223e-16\\
+20480 & 4.440892e-15\\
+40960 & 9.992007e-16\\
+81920 & 3.996803e-15\\
+\end{tabular}
+ \end{subtable}
+ \begin{subtable}[b]{0.5\textwidth}
+  \centering
+\begin{tabular}{lll}
+\hline
+$n$ & $\Delta(Pol)$\\
+\hline
+10 & 0.000000e+00\\
+20 & 0.000000e+00\\
+40 & 0.000000e+00\\
+80 & 0.000000e+00\\
+160 & 0.000000e+00\\
+320 & 1.421085e-14\\
+640 & 0.000000e+00\\
+1280 & 1.421085e-14\\
+2560 & 1.136868e-13\\
+5120 & 1.136868e-13\\
+10240 & 1.421085e-14\\
+20480 & 4.263256e-14\\
+40960 & 8.526513e-14\\
+81920 & 5.684342e-14\\
+\end{tabular}
+ \end{subtable}
+\end{figure}
+
+Nel caso della quadratura gaussiana di quinto grado l'errore decresce molto più rapidamente, tanto che già con poce decine di intervalli il risultato può essere considerato sufficientemente preciso. Dopo di chè i dati sono troppo disturbati dal rumore per poterne ricavare un andamento funzionale. Si nota inoltre che per il polinomio l'errore è esattamente zero come previsto dalla teoria.
+\\
+
+\subsection{Monte Carlo}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{integral4a}
+\caption{Log}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{integral4b}
+\caption{Pol}
+\end{subfigure}
+\caption{In rosso l'errore MC in funzione del numero di elementi del sample ed in blu la funzione $1/\sqrt{N}$.}
+\label{fig:integral4}
+\end{figure}
+
+Per analizzare il comportamento dell'errore dei metodi Molte Carlo si studia ora il caso di un integrale di volume bidimensionale. Il dominio di integrazione è l'insieme $\Omega = \{(x,y)\in \mathbb{R}\,|\, x^2+y^2<1\,\wedge\, x,y>0\}$ mentre la funzione integranda non è altro che la costante $1$. Si utilizza la convenzionale funzione di misura $d\mu=dxdy$. La misura di $\Omega$ allora è facile da calcolare essendo l'area di un quarto di circonferenza goniometrica: $$\int_\Omega d\mu = \tfrac{\pi}{4}$$
+La distribuzione dell'errore MC in funzione del numero di elementi del sample deve verificare la relazione $\sigma_{MC}\simeq 1/\sqrt N$.
+\\
+
+In figura \ref{fig:pi} sono rappresentati in scala bilogaritmica i dati ottenuti da $50000$ esecuzioni dell'algoritmo implementante il metodo Monte Carlo. In ascissa sono riportati i numeri delle dimensioni del sample mentre sulle ordinate sono ripotati i rispettivi errori.\\
+Come previsto, la distribuzione ottenuta risulta centrata sulla curva $1/\sqrt{N}$ che è proprio l'errore stimato teoricamente.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{pi}

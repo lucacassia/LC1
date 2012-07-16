@@ -40,13 +40,13 @@ $\langle x_l x_k\rangle = 2|\langle\tilde{E}_0|\hat{x}|\tilde{E}_1\rangle|^2\exp
 Partendo da uno stato $\phi_0$ casuale, è necessario lasciare del tempo affinchè sistema si porti alla $pdf$ di equilibrio. Tale processo, denominato termalizzazione, richiede in questo caso non più di 500 cicli di Metropolis, eseguiti i quali sarà possibile estrarre le configurazioni con la distribuzione desiderata. Come condizione iniziale si possono inizializzare tutte le variabili a zero (cold start) oppure a valori random (hot start).
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{action1}
+\includegraphics[width=0.8\textwidth]{action1}
 \caption{Cold Start}
 \label{fig:action1}
 \end{figure}
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{action2}
+\includegraphics[width=0.8\textwidth]{action2}
 \caption{Hot Start}
 \label{fig:action2}
 \end{figure}
@@ -62,7 +62,7 @@ Tuttavia, per calcolare $\Delta S = S'-S$ si può tenere presente il fatto che a
 \end{eqnarray*}
 
 È facile verificare che l'algoritmo e i risultati possono essere resi indipendenti dal fattore di reticolo $a$ se si ridefiniscono propriamente i parametri del problema, il che è equivalente a porre $a=1$.
-\newpage
+
 \subsection{Autocorrelazione}
 
 Si studia ora la correlazione tra configurazioni generate a step consecutivi dell'algoritmo per ottenere una stima del tempo di decorrelazione $\tau_d$ del sistema. Tale dipendenza fra elementi della catena viene anche denominata \textit{autocorrelazione}.
@@ -77,14 +77,21 @@ Il grafico dell'autocorrelazione $R(\tau)$ per l'osservabile $O(|l-k|)=\langle x
 \caption{Autocorrelazione dell'osservabile $\langle x_lx_k\rangle$ per tutti i valori di $|l-k|$}
 \label{fig:autocorrelation}
 \end{figure}
-Il tempo di decorrelazione $\tau_d$ è dell'ordine delle unità ($\sim3$) e quindi, per $\tau>5\tau_d\sim15$ il segnale può essere considerato praticamente scorrelato.
-\newpage
+Il tempo di decorrelazione $\tau_d$ è dell'ordine delle unità ($\sim3$) e quindi, per $\tau>5\tau_d\sim15$ il segnale può essere considerato praticamente scorrelato (fig.\ref{fig:autocorrelation+}).
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{autocorrelation+}
+\caption{Autocorrelazione per $|l-k|>15$.}
+\label{fig:autocorrelation+}
+\end{figure}
+
 \subsection{Funzioni di Correlazione}
 
 Si calcola numericamente l'integrale $\int Dx \ x_lx_ke^{-S_E}$ applicando i metodi Monte Carlo e Metropolis in congiunzione. Affinchè le configurazioni utilizzate siano statisticamente indipendenti, si raggruppano i sample in $bin$ e si utilizza l'insieme delle medie su ogni $bin$ come sample di configurazioni per il calcolo MC. In questo modo, se la dimensione dei $bin$ è molto maggiore di $\tau_d$, la media sul $bin$ attenua considerevolmente gli effetti di correlazione e perciò il nuovo sample può essere considerato statisticamente unbiased.
 \\
 
 La media di un generico osservabile $O$ calcolata in questo modo è analiticamente uguale a quella calcolata per mezzo del sample completo di ogni elemento estratto. La varianza sui valori medi, tuttavia, differisce dalla varianza semplice di un termine proporzionale alla covarianza fra le variabili.
+\\
 
 \begin{figure}[H]
 \centering
@@ -183,7 +190,7 @@ Risultati dei fit:
 W&=&0.667925\pm0.007161
 \end{eqnarray*}
 
-Si nota inoltre che anche l'errore stimato dal \textit{cluster jackknife} è ditribuito gaussianamente intorno ad un valore molto vicino all'errore statistico ricavato dal fit.
+Si nota inoltre che anche l'errore stimato dal \textit{cluster jackknife} è ditribuito normalmente intorno al valore dell'errore statistico ricavato dal fit.
 \\
 
 Si studia ora l'andamento della varianza $\sigma^2_{jackknife}$ in funzione del numero di $sweeps$.
@@ -221,5 +228,6 @@ Rappresentando i dati ricavati dalle simulazioni in un grafico in scala bilogari
 \caption{Varianza di $\Delta E$ in funzione del numero di sweeps}
 \label{fig:variance}
 \end{figure}
-Interpolando linearmente il logaritmo dei dati sia sulle ascisse che sulle ordinate si ottiene infatti un coefficiente angolare $m=-0.976\sim-1$. Se ne deduce quindi che: 
+Interpolando linearmente i dati in scala bilogaritica si ottiene infatti un coefficiente angolare $m=-0.976\sim-1$. Se ne deduce quindi che: 
 $$\sigma\sim1/\sqrt{N_{sweeps}}$$
+in accordo con la teoria degli errori per i metodi della famiglia dei Monte Carlo.

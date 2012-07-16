@@ -19,7 +19,7 @@ all: rmxeq mkdep mkxeq rmpmk
 
 # main programs and required modules 
 
-MAIN = series derive integral pi buffon metropolis ode
+MAIN = series derive integral pi importance_sampling buffon metropolis ode
 
 RANDOM = ranlxs ranlxd gauss
 
