@@ -15,7 +15,6 @@ void loading(int i,int n){
 void binning(){
     unsigned int i, count = 0, freq[125];
     double min = 0.93, max = 0.99;
-//    double min = 0.96, max = 1.02;
     double width = (max-min)/125, tmp;
     for(i = 0; i < 125; i++)
         freq[i] = 0;
