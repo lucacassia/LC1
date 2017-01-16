@@ -12,7 +12,7 @@ Make sure to install these first.
 
 **Arch Linux**
 
-pacman -S freeglut glew
+    pacman -S freeglut glew
 
 ---
 
